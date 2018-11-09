@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.LogMapper2">
+    <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.Log">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="inc_id" jdbcType="BIGINT" property="incId" />
+        <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+        <result column="create_username" jdbcType="VARCHAR" property="createUsername" />
+        <result column="action_name" jdbcType="VARCHAR" property="actionType" />
+        <result column="action_detail" jdbcType="VARCHAR" property="actionDetail" />
+        <result column="user_ip" jdbcType="VARCHAR" property="userIp" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+    <select id="selectLogWithConditionsForPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        l.*, s.`name` AS action_name
+        FROM
+        log l,
+        sys_dict s
+        WHERE
+        l.action_type = s.`value`
+        AND l.inc_id = #{incId}
+        <if test="operator != null and operator != ''">
+            AND l.create_username LIKE CONCAT('%', #{operator}, '%')
+        </if>
+        <if test="day != null and day != 1">
+        AND DATE_SUB(CURDATE(), INTERVAL #{day} DAY) &lt;= l.create_time
+        </if>
+        <if test="startTime != null and endTime != null">
+            AND (l.create_time BETWEEN #{startTime} AND #{endTime})
+        </if>
+        ORDER BY
+        l.create_time DESC
+        <if test="startNum != null and endNum != null">
+            LIMIT #{startNum},
+            #{endNum}
+        </if>
+    </select>
+    <select id="countLogWithConditions" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+        COUNT(*)
+        FROM
+        log l,
+        sys_dict s
+        WHERE
+        l.action_type = s.`value`
+        AND l.inc_id = #{incId}
+        <if test="operator != null and operator != ''">
+            AND l.create_username LIKE CONCAT('%', #{operator}, '%')
+        </if>
+        <if test="day != null and day != 1">
+            AND DATE_SUB(CURDATE(), INTERVAL #{day} DAY) &lt;= l.create_time
+        </if>
+        <if test="startTime != null and endTime != null">
+            AND (l.create_time BETWEEN #{startTime} AND #{endTime})
+        </if>
+    </select>
+</mapper>

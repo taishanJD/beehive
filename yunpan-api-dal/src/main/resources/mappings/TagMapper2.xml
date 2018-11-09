@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.TagMapper2">
+	<resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.Tag">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="inc_id" jdbcType="BIGINT" property="incId" />
+		<result column="tag_name" jdbcType="VARCHAR" property="tagName" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="BIGINT" property="createUser" />
+		<result column="is_delete" jdbcType="CHAR" property="isDelete" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, inc_id, tag_name, create_time, create_user, is_delete
+	</sql>
+	<select id="getTagList" resultMap="BaseResultMap">
+		select t.id,t.tag_name from tag t JOIN tag_document_rel tdr
+		on t.id = tdr.tag_id
+		where tdr.inc_id = #{incId}
+		and tdr.document_id = #{docId}
+		and t.is_delete = '0';
+	</select>
+
+
+	<!-- 删除tag -->
+	<update id="delTagByTagId">
+		update tag set is_delete = '1' where id = #{tagId} and inc_id = #{incId} and create_user = #{userId}
+	</update>
+	<!-- 获取top10 Tag列表 -->
+	<select id="getTopTenTagList" resultMap="BaseResultMap">
+		select id,tag_name from tag where is_delete = '0' and inc_id = #{incId} and create_user =
+		#{userId} and id in
+		<foreach collection="tagIds" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		order by
+		field(
+		id,
+		<foreach collection="tagIds" index="index" item="item"
+			separator=",">
+			#{item}
+		</foreach>
+		)
+	</select>
+	
+	<!-- 获取所有tag 以字典顺序排序 -->
+	<select id="getAllTags" resultMap="BaseResultMap">
+		select id,tag_name from tag
+		where inc_id = #{incId} and create_user = #{userId} and is_delete = '0'  
+		<if test="filter != null ">
+       		and tag_name like  concat(concat('%',#{filter}),'%')
+      	</if>
+		order by
+-- 			convert(tag_name using gbk) collate gbk_chinese_ci asc
+			create_time DESC
+	</select>
+</mapper>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.TagDocumentRelMapper2">
+	<resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.Document">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="inc_id" jdbcType="BIGINT" property="incId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="document_version_id" jdbcType="BIGINT" property="documentVersionId" />
+    <result column="document_name" jdbcType="VARCHAR" property="documentName" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="document_type" jdbcType="VARCHAR" property="documentType" />
+    <result column="id_path" jdbcType="VARCHAR" property="idPath" />
+    <result column="size" jdbcType="BIGINT" property="size" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="create_username" jdbcType="VARCHAR" property="createUsername" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="update_username" jdbcType="VARCHAR" property="updateUsername" />
+    <result column="is_delete" jdbcType="CHAR" property="isDelete" />
+    <result column="is_share" jdbcType="CHAR" property="isShare" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  </resultMap>
+	
+	<resultMap id="BaseResultMapCarryTagsColPerm" type="com.quarkdata.yunpan.api.model.vo.TagVO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="inc_id" jdbcType="BIGINT" property="incId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="document_version_id" jdbcType="BIGINT" property="documentVersionId" />
+    <result column="document_name" jdbcType="VARCHAR" property="documentName" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="document_type" jdbcType="VARCHAR" property="documentType" />
+    <result column="id_path" jdbcType="VARCHAR" property="idPath" />
+    <result column="size" jdbcType="BIGINT" property="size" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="create_username" jdbcType="VARCHAR" property="createUsername" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="update_username" jdbcType="VARCHAR" property="updateUsername" />
+    <result column="is_delete" jdbcType="CHAR" property="isDelete" />
+    <result column="is_share" jdbcType="CHAR" property="isShare" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    
+    <result column="is_col" property="isCollected" />
+    
+    <collection property="documentPermission" ofType="com.quarkdata.yunpan.api.model.dataobj.DocumentPermission">
+   		<id property="id" jdbcType="BIGINT" column="dp_id" />
+   		<!-- <id property="documentId" jdbcType="BIGINT" column="document_id" /> -->
+		<result property="permission" column="permission" jdbcType="CHAR" />
+    </collection>
+   
+    <collection property="tags" ofType="com.quarkdata.yunpan.api.model.dataobj.Tag">
+   		<id property="id" jdbcType="BIGINT" column="tag_id" />
+		<result property="tagName" column="tag_name" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
+  
+	<!-- 获取某用户的全部标签id列表 ,以使用频率排序 -->
+	<select id="getTopTenTagIdList" resultType="java.lang.Long">
+	SELECT a.tag_id FROM(
+		select tag_id,COUNT(*) count from tag_document_rel where inc_id = #{incId} and create_user
+		= #{userId} group by tag_id order by count(*) desc limit 10
+		)a LEFT JOIN tag ON tag.id=a.tag_id
+		ORDER BY count DESC,create_time DESC
+	</select>
+	
+	<!-- 获取使用了某标签的所有文档 -->
+	<!--<select id="getDocListByTagId" parameterType="map" resultMap="BaseResultMapCarryTagsColPerm">
+		SELECT
+		a.id,
+		a.document_name,
+		a.document_type, 
+		a.size, a.update_time,
+		dp.id dp_id, 
+		dp.permission,
+		IF ((b.id IS NULL), FALSE, TRUE) is_col,
+		tag.id tag_id,
+		tag.tag_name
+		FROM
+		(
+		SELECT
+		*
+		FROM
+		document d
+		WHERE
+        (d.type = 0 OR
+		d.type = 2)
+		AND d.inc_id = #{incId}
+		AND d.create_user = #{userId}
+		AND d.is_delete = '0'
+		<if test="filter != null ">
+       and d.document_name like  concat(concat('%',#{filter}),'%')
+      	</if>
+		and d.id in (select document_id from tag_document_rel where tag_id = #{tagId})
+		) a
+		LEFT JOIN 
+		(
+		SELECT
+		cdr.*
+		FROM
+		collect_document_rel cdr
+		) b ON a.id = b.document_id
+		AND a.create_user = b.user_id
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id
+		LEFT JOIN document_permission dp ON a.id = dp.document_id
+		LEFT JOIN tag ON tag.id= tdr.tag_id
+		ORDER BY a.document_type desc,a.create_time DESC,convert(tag.tag_name using gbk) collate gbk_chinese_ci asc;
+	</select>-->
+	<select id="getDocListByTagId" parameterType="map" resultMap="BaseResultMapCarryTagsColPerm">
+		SELECT
+			d.*, (
+				CASE
+				WHEN d.document_type = 'dir' THEN
+					0
+				ELSE
+					1
+				END
+			) AS document_type_order,
+			(
+				CASE
+				WHEN cdr.id IS NULL THEN
+					FALSE
+				ELSE
+					TRUE
+				END
+			) AS is_col,
+			t.id AS tag_id,
+			t.tag_name
+		FROM
+			(
+				SELECT
+					tdr.document_id
+				FROM
+					tag_document_rel tdr
+				WHERE
+					tdr.inc_id = #{incId}
+				AND tdr.tag_id = #{tagId}
+			) td
+		INNER JOIN document d ON td.document_id = d.id
+		AND d.is_delete = 0
+		<if test="filter != null and filter != ''">
+			AND d.document_name LIKE CONCAT('%', #{filter}, '%')
+		</if>
+		LEFT JOIN collect_document_rel cdr ON cdr.document_id = d.id
+		AND cdr.user_id = #{userId}
+		LEFT JOIN tag_document_rel tdr ON tdr.document_id = d.id
+		LEFT JOIN tag t ON tdr.tag_id = t.id
+		ORDER BY
+			document_type_order,
+			d.document_type,
+			d.update_time DESC
+	</select>
+</mapper>

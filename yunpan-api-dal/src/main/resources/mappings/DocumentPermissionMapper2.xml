@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.DocumentPermissionMapper2">
+    <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.DocumentPermission">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="inc_id" jdbcType="BIGINT" property="incId"/>
+        <result column="document_id" jdbcType="BIGINT" property="documentId"/>
+        <result column="receiver_type" jdbcType="CHAR" property="receiverType"/>
+        <result column="receiver_id" jdbcType="BIGINT" property="receiverId"/>
+        <result column="permission" jdbcType="CHAR" property="permission"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, inc_id, document_id, receiver_type, receiver_id, permission
+  </sql>
+    <select id="getPermission" resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentPermission">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM document_permission
+        WHERE inc_id = #{incId} AND document_id = #{docId}
+        AND( (receiver_type=0 and receiver_id = #{userId})
+
+        <if test="groupIds != null and groupIds.size() > 0">
+            or (receiver_type=1 and receiver_id in
+            <foreach item="item" index="index" collection="groupIds"
+                     open="(" separator="," close=")">
+                        #{item}
+            </foreach>)
+        </if>
+
+        <if test="departmentId != null">
+            or (receiver_type=2 and receiver_id = #{departmentId})
+        </if>)
+    </select>
+    <delete id="deleteByDocumentIdList" parameterType="java.util.List">
+        delete from document_permission
+        where document_id in
+        <foreach item="id" collection="list" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </delete>
+    <select id="getRecentPermission" parameterType="map" resultType="java.lang.String">
+    	SELECT MAX(dp.permission) FROM `document_permission` dp 
+    	where dp.document_id in
+    	<foreach item="id" collection="docIds" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        AND (
+        (
+        dp.receiver_id = #{userId,jdbcType=BIGINT}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in 
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>
+		)
+    	GROUP BY dp.document_id
+    	ORDER BY dp.document_id DESC
+    	LIMIT 0,1;
+    </select>
+    
+    <!-- 根据doc_permission表中receiver_id查询文档名称集合 -->
+    <select id="selectDocToBeTransferPermission" resultType="java.lang.String">
+    	SELECT
+			d.document_name
+		FROM
+			document d,
+			document_permission p
+		WHERE
+			d.id = p.document_id
+		AND d.inc_id = #{incId}
+		AND p.receiver_id = #{oldOrgAdminId}
+    </select>
+
+    <delete id="deleteByReceiveId">
+        DELETE FROM document_permission WHERE receiver_id=#{value}
+    </delete>
+
+    <select id="selectByDidAndReceiveType" resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentPermission">
+        SELECT * FROM document_permission WHERE document_id=#{dId} AND receiver_type=#{type}
+    </select>
+
+    <select id="getPermissionType" parameterType="map" resultType="java.lang.String">
+        select permission from document_permission where document_id = #{documentId,jdbcType=BIGINT} and receiver_id = #{receiverId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByRidAndReceiveType" resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentPermission">
+        SELECT * FROM document_permission WHERE receiver_id=#{receiveId} AND receiver_type=#{type} Limit 1
+    </select>
+
+    <select id="getDocumentMaxPermission" parameterType="map" resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentPermission">
+        select a.id as id, c.id as document_id, max(permission) as permission from document_permission as a JOIN
+        document as b
+        JOIN
+        (SELECT concat('%/' , id ,'/%') as mask, id from document where id in
+        <foreach item="id" collection="docIds" open="(" close=")" separator=",">#{id}
+        </foreach>)
+        as c
+        on a.document_id = b.id
+        and
+        a.receiver_id = #{receiverId,jdbcType=BIGINT}
+        AND a.receiver_type = #{receiver_type}
+         and b.id_path LIKE c.mask GROUP BY c.id
+    </select>
+
+    <!--❀❀❀❀❀❀❀❀❀❀❀ 更新权限后的sql ❀❀❀❀❀❀❀❀❀❀-->
+    <select id="hasPermission" parameterType="map" resultType="string">
+        SELECT
+            CASE
+        WHEN COUNT(*) > 0 THEN
+            '1'
+        ELSE
+            '0'
+        END AS has_permission
+        FROM
+            document_permission dp
+        WHERE
+            dp.inc_id = #{incId}
+        AND dp.document_id = #{documentId}
+        AND(
+            (
+                dp.receiver_type = 0
+                AND dp.receiver_id = #{userId}
+                AND SUBSTR(dp.permission, #{permissionIndex}, 1) = 1
+            )
+            <if test="groupIds != null and groupIds.size() > 0">
+                OR (
+                    dp.receiver_type = 1
+                    AND dp.receiver_id IN
+                    <foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                AND SUBSTR(dp.permission, #{permissionIndex}, 1) = 1
+                )
+            </if>
+            <if test="deptId != null">
+                OR (
+                    dp.receiver_type = 2
+                    AND dp.receiver_id = #{deptId}
+                    AND SUBSTR(dp.permission, #{permissionIndex}, 1) = 1
+                )
+            </if>
+        )
+    </select>
+    <insert id="setChildPermission" parameterType="map">
+        INSERT INTO document_permission (
+            inc_id,
+            document_id,
+            receiver_type,
+            receiver_id,
+            permission
+        ) SELECT
+            a.inc_id,
+            a.id,
+            #{receiverType},
+            #{receiverId},
+            #{permission}
+        FROM
+            (
+                SELECT
+                    *
+                FROM
+                    document d
+                WHERE
+                    d.inc_id = #{incId}
+                AND d.id_path LIKE CONCAT(#{idPath}, '%')
+            ) a
+        LEFT JOIN document_permission_inherit dpi ON a.id = dpi.document_id
+        WHERE
+            dpi.document_id IS NULL
+        OR dpi.document_id = #{documentId}
+        ON DUPLICATE KEY UPDATE permission = #{permission};
+    </insert>
+    <delete id="deleteChildPermission" parameterType="map">
+        DELETE
+        FROM
+            document_permission
+        WHERE permission != #{associatedVisiblePermission} AND permission != #{creatorPermission} AND
+            document_id IN (
+                SELECT
+                    a.id
+                FROM
+                    (
+                        SELECT
+                            *
+                        FROM
+                            document d
+                        WHERE
+                            d.inc_id = #{incId}
+                        AND d.id_path LIKE CONCAT(#{idPath}, '%')
+                    ) a
+                LEFT JOIN document_permission_inherit dpi ON a.id = dpi.document_id
+                WHERE
+                    dpi.document_id IS NULL
+                OR dpi.document_id = #{documentId}
+            )
+    </delete>
+    <insert id="setFatherPermission" parameterType="map">
+        INSERT INTO document_permission (
+            inc_id,
+            document_id,
+            receiver_type,
+            receiver_id,
+            permission
+        ) SELECT
+            #{incId},
+            #{documentId},
+            #{receiverType},
+            #{receiverId},
+            #{associatedVisiblePermission}
+        FROM
+            DUAL
+        WHERE
+            NOT EXISTS (
+                SELECT
+                    id
+                FROM
+                    document_permission dp
+                WHERE
+                    dp.inc_id = #{incId}
+                AND dp.document_id = #{documentId}
+                <choose>
+                    <when test="receiverType == 0">
+                        AND (
+                            (dp.receiver_type = '0' AND dp.receiver_id = #{receiverId})
+                            <if test="groupIds != null and groupIds.size() > 0">
+                                OR (dp.receiver_type = '1' AND dp.receiver_id IN
+                                <foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+                                    #{item}
+                                </foreach>
+                                )
+                            </if>
+                            <if test="deptId != null">
+                                OR (dp.receiver_type = '2' AND dp.receiver_id = #{deptId})
+                            </if>
+                        )
+                    </when>
+                    <when test="receiverType == 1">
+                        AND (dp.receiver_type = '1' AND dp.receiver_id = #{receiverId})
+                    </when>
+                    <otherwise>
+                        <if test="receiverType == 2">
+                            AND (dp.receiver_type = '2' AND dp.receiver_id = #{receiverId})
+                        </if>
+                    </otherwise>
+                </choose>
+	        )
+    </insert>
+    <insert id="insert" parameterType="com.quarkdata.yunpan.api.model.dataobj.DocumentPermission">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO document_permission (inc_id, document_id, receiver_type, receiver_id, permission, share_id)
+        values (#{incId,jdbcType=BIGINT}, #{documentId,jdbcType=BIGINT}, #{receiverType,jdbcType=CHAR},
+        #{receiverId,jdbcType=BIGINT}, #{permission,jdbcType=CHAR}, #{shareId,jdbcType=BIGINT})
+        ON DUPLICATE KEY UPDATE permission = #{permission};
+    </insert>
+    <select id="getPermissionByDocumentId" parameterType="map" resultType="string">
+        SELECT
+            dp.permission
+        FROM
+            document_permission dp
+        WHERE
+            dp.inc_id = #{incId}
+        AND dp.document_id = #{docId} AND (
+            (dp.receiver_type = '0' AND dp.receiver_id = #{userId})
+            <if test="groupIds != null and groupIds.size() > 0">
+                OR (dp.receiver_type = '1' AND dp.receiver_id IN
+                <foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="deptId != null">
+                OR (dp.receiver_type = '2' AND dp.receiver_id = #{deptId})
+            </if>
+        ) ORDER BY dp.receiver_type LIMIT 1
+    </select>
+    
+</mapper>

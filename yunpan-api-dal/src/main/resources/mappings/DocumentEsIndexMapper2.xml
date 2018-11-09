@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.DocumentEsIndexMapper2">
+    <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.vo.DocumentEsIndexExtend">
+        <result column="index_id" jdbcType="BIGINT" property="indexId" />
+        <result column="document_name" jdbcType="VARCHAR" property="documentName" />
+        <result column="type" jdbcType="CHAR" property="type" />
+        <result column="document_type" jdbcType="VARCHAR" property="documentType" />
+        <result column="document_version_id" jdbcType="VARCHAR" property="documentVersionId" />
+        <result column="inc_id" jdbcType="BIGINT" property="incId" />
+        <result column="document_id" jdbcType="BIGINT" property="documentId" />
+    </resultMap>
+    <select id="selectDocumentIndexByVersionId" parameterType="java.lang.Long" resultType="com.quarkdata.yunpan.api.model.vo.DocumentEsIndexExtend">
+        select DISTINCT
+         e.id as index_id, d.document_name, d.type, e.document_type,
+          if(e.document_type = 'dir', CONCAT("dir_",d.id), v.id) as document_version_id, e.inc_id, d.id as document_id
+         from document_version as v, document_es_index as e, document as d
+        where ((v.document_id = d.id and v.id = e.document_version_id) or
+        (e.document_type = 'dir' and  d.id = e.document_version_id)) and e.inc_Id = #{incId};
+    </select>
+</mapper>

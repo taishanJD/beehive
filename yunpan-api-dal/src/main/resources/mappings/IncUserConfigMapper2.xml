@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.IncUserConfigMapper2">
+    <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.IncUserConfig">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="inc_id" jdbcType="BIGINT" property="incId" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="is_receive_message" jdbcType="CHAR" property="isReceiveMessage" />
+        <result column="is_receive_email_message" jdbcType="CHAR" property="isReceiveEmailMessage" />
+    </resultMap>
+    <select id="selectByUserIdAndIncId" parameterType="map" resultMap="BaseResultMap">
+        SELECT * from inc_user_config WHERE user_id=#{userId} AND inc_id=#{incId}
+    </select>
+</mapper>

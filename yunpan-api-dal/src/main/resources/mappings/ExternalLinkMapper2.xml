@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.ExternalLinkMapper2">
+    <resultMap id="BaseResultMap"
+               type="com.quarkdata.yunpan.api.model.vo.DocumentLinkExtend">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="inc_id" jdbcType="BIGINT" property="incId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="document_version_id" jdbcType="BIGINT"
+                property="documentVersionId"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+        <result column="type" jdbcType="CHAR" property="type"/>
+        <result column="document_type" jdbcType="VARCHAR" property="documentType"/>
+        <result column="id_path" jdbcType="VARCHAR" property="idPath"/>
+        <result column="size" jdbcType="BIGINT" property="size"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="BIGINT" property="createUser"/>
+        <result column="create_username" jdbcType="VARCHAR" property="createUsername"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="BIGINT" property="updateUser"/>
+        <result column="update_username" jdbcType="VARCHAR" property="updateUsername"/>
+        <result column="is_delete" jdbcType="CHAR" property="isDelete"/>
+        <result column="is_share" jdbcType="CHAR" property="isShare"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+
+        <result column="view_count" jdbcType="INTEGER" property="viewCount"/>
+        <result column="download_count" jdbcType="INTEGER" property="downloadCount"/>
+        <result column="external_link_expire_time" jdbcType="TIMESTAMP" property="externalLinkExpireTime"/>
+        <result column="external_link_code" jdbcType="TIMESTAMP" property="externalLinkCode"/>
+        <result column="document_id" jdbcType="BIGINT" property="documentId"/>
+        <!--<collection property="tags"-->
+        <!--ofType="com.quarkdata.yunpan.api.model.dataobj.Tag" notNullColumn="tag_id">-->
+        <!--<id property="id" jdbcType="BIGINT" column="tag_id" />-->
+        <!--<result property="tagName" column="tag_name" jdbcType="VARCHAR" />-->
+        <!--</collection>-->
+    </resultMap>
+    <resultMap id="ResultMapWithNotification"  type="com.quarkdata.yunpan.api.model.vo.ShareAndLinkVO">
+        <id column="share_id" jdbcType="BIGINT" property="shareId"/>
+        <result column="inc_id" jdbcType="BIGINT" property="incId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="document_version_id" jdbcType="BIGINT" property="documentVersionId"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+        <result column="type" jdbcType="CHAR" property="type"/>
+        <result column="document_type" jdbcType="VARCHAR" property="documentType"/>
+        <result column="id_path" jdbcType="VARCHAR" property="idPath"/>
+        <result column="size" jdbcType="BIGINT" property="size"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="BIGINT" property="createUser"/>
+        <result column="create_username" jdbcType="VARCHAR" property="createUsername"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="BIGINT" property="updateUser"/>
+        <result column="update_username" jdbcType="VARCHAR" property="updateUsername"/>
+        <result column="is_delete" jdbcType="CHAR" property="isDelete"/>
+        <result column="is_share" jdbcType="CHAR" property="isShare"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+
+        <result column="share_type" jdbcType="VARCHAR" property="shareType"/>
+        <!--<result column="share_id" jdbcType="BIGINT" property="shareId"/>-->
+        <result column="share_time" jdbcType="TIMESTAMP" property="shareTime"/>
+        <result column="expiration_time" jdbcType="TIMESTAMP" property="expirationTime"/>
+        <result column="is_link" jdbcType="CHAR" property="isLink"/>
+        <result column="view_count" jdbcType="INTEGER" property="viewCount"/>
+        <result column="download_count" jdbcType="INTEGER" property="downloadCount"/>
+        <result column="external_link_expire_time" jdbcType="TIMESTAMP" property="externalLinkExpireTime"/>
+        <result column="external_link_code" jdbcType="TIMESTAMP" property="externalLinkCode"/>
+        <result column="document_id" jdbcType="BIGINT" property="documentId"/>
+        <result column="allow_preview" jdbcType="CHAR" property="allowPreview" />
+        <result column="allow_download" jdbcType="CHAR" property="allowDownload" />
+        <result column="is_secret" jdbcType="CHAR" property="isSecret" />
+        <result column="fetch_code" jdbcType="CHAR" property="fetchCode" />
+        <collection property="emails" ofType="java.lang.String">
+            <result column="email"></result>
+        </collection>
+        <collection property="telephones" ofType="java.lang.String">
+            <result column="telephone"></result>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    el.id, d.id document_id, external_link_code, d.document_name, document_type, d.size,
+    external_link_expire_time, view_count, download_count, el.create_time
+  </sql>
+
+    <select id="getLinks" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>, d.document_version_id, d.document_type,d.type,
+        el.view_count , el.download_count , el.external_link_expire_time,external_link_code
+--         ,tag.id tag_id,tag.tag_name
+        FROM (((document d JOIN external_link el
+        ON d.id = el.document_id AND d.inc_id = #{incId} AND d.is_delete = '0' AND el.external_link_type != '3'
+        <if test="documentName != null">
+            AND d.document_name LIKE '%${documentName}%'
+        </if>
+        ))
+--         LEFT JOIN
+--         tag_document_rel tdr ON d.id = tdr.document_id
+        )
+--         LEFT JOIN tag ON tag.id
+--         = tdr.tag_id
+--         AND tag.is_delete = '0'
+        WHERE el.create_user = #{userId}
+        ORDER BY el.create_time DESC
+    </select>
+
+    <select id="getLinkVOList" parameterType="java.util.Map" resultMap="ResultMapWithNotification">
+        SELECT
+          i.*,
+          case when elmn.receiver_type = '0' then elmn.receiver_detail end as telephone,
+          case when elmn.receiver_type = '1' then elmn.receiver_detail end as email
+        FROM (
+            SELECT DISTINCT
+                x.id AS document_id,
+                (
+                    CASE
+                    WHEN f.document_type = 'dir' THEN
+                      0
+                    ELSE
+                      1
+                    END
+                ) AS document_type_order,
+                el.id AS share_id,
+                'link' AS share_type,
+                (CASE
+                 WHEN el.id IS NOT NULL THEN
+                   1
+                 ELSE
+                   0
+                 END) AS is_link,
+                el.create_time AS share_time,
+                el.external_link_expire_time,
+                el.external_link_expire_time AS expiration_time,
+                el.external_link_code,
+                el.fetch_code,
+                case when el.is_secret = '0' then false else true end as 'is_secret',
+                case when el.allow_preview = '0' then false else true end as 'allow_preview',
+                case when el.allow_download = '0' then false else true end as 'allow_download',
+                f.*, el.view_count,el.download_count
+            FROM
+                external_link el
+            RIGHT JOIN (
+                SELECT
+                    n.id
+                FROM
+                    (
+                        SELECT DISTINCT
+                            d.id_path
+                        FROM
+                            external_link el
+                        INNER JOIN document d ON el.document_id = d.id
+                        WHERE
+                            el.inc_id = #{incId}
+                        <if test="docId != null">
+                            AND el.document_id = #{docId}
+                        </if>
+                        AND el.create_user = #{userId}
+                        AND d.is_delete = 0
+                        GROUP BY
+                            d.id
+                    ) m
+                INNER JOIN document n ON n.id_path LIKE CONCAT(m.id_path, '%')
+            ) x ON el.document_id = x.id
+            INNER JOIN document f ON x.id = f.id
+            AND f.is_delete = 0
+            <choose>
+                <when test="parentId == null and documentName == null">
+                    AND el.id IS NOT NULL
+                </when>
+                <when test="parentId != null and documentName == null">
+                    AND f.parent_id = #{parentId}
+                </when>
+                <otherwise>
+                    <if test="parentId != null and documentName != null">
+                        AND f.id_path LIKE CONCAT('%/', #{parentId}, '/%')
+                    </if>
+                </otherwise>
+            </choose>
+            <if test="documentName != null and documentName != ''">
+                AND f.document_name LIKE CONCAT('%', #{documentName}, '%')
+            </if>
+            ORDER BY
+            document_type_order ASC,el.create_time DESC
+            <if test="startNum != null and pageSize != null">
+                LIMIT #{startNum}, #{pageSize}
+            </if>
+        ) i left JOIN external_link_msg_notification elmn ON i.share_id = elmn.link_id
+    </select>
+    <!--<select id="getLinkVOList" parameterType="java.util.Map" resultType="com.quarkdata.yunpan.api.model.vo.ShareAndLinkVO">
+        SELECT DISTINCT
+            d.*, el.id AS share_id,
+            'link' AS share_type,
+            el.create_time AS share_time,
+            el.external_link_expire_time AS expiration_time,
+            el.external_link_code,
+            el.download_count,
+            (
+                SELECT
+                    count(
+                        CASE
+                        WHEN l.action_type = 34 THEN
+                            l.action_type
+                        ELSE
+                            NULL
+                        END
+                    )
+                FROM
+                    log_document_rel ld,
+                    log l
+                WHERE
+                    d.id = ld.document_id
+                AND ld.log_id = l.id
+            ) AS view_count
+        FROM
+            external_link el
+        INNER JOIN document d ON el.document_id = d.id
+        WHERE
+            el.inc_id = #{incId}
+        AND el.create_user = #{userId}
+        AND d.is_delete = 0
+        <if test="documentName != null and documentName != ''">
+            AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+        </if>
+        ORDER BY
+            share_time DESC
+        <if test="startNum != null and startNum >= 0 and pageSize != null and pageSize > 0">
+            LIMIT #{startNum}, #{pageSize}
+        </if>
+    </select>-->
+
+</mapper>

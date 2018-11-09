@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.IncConfigMapper">
+  <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.IncConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="inc_id" jdbcType="BIGINT" property="incId" />
+    <result column="history_version_type" jdbcType="CHAR" property="historyVersionType" />
+    <result column="history_version_param" jdbcType="INTEGER" property="historyVersionParam" />
+    <result column="inc_ratio" jdbcType="INTEGER" property="incRatio" />
+    <result column="user_ratio" jdbcType="INTEGER" property="userRatio" />
+    <result column="per_user_quota" jdbcType="INTEGER" property="perUserQuota" />
+    <result column="inc_total_quota" jdbcType="INTEGER" property="incTotalQuota" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_delete" jdbcType="CHAR" property="isDelete" />
+    <result column="link_man" jdbcType="VARCHAR" property="linkMan" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="ceph_access_key" jdbcType="VARCHAR" property="cephAccessKey" />
+    <result column="ceph_secret_key" jdbcType="VARCHAR" property="cephSecretKey" />
+    <result column="ceph_url" jdbcType="VARCHAR" property="cephUrl" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.quarkdata.yunpan.api.model.dataobj.IncConfig">
+    <result column="logo" jdbcType="LONGVARBINARY" property="logo" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, inc_id, history_version_type, history_version_param, inc_ratio, user_ratio, per_user_quota, 
+    inc_total_quota, create_time, is_delete, link_man, telephone, email, ceph_access_key, 
+    ceph_secret_key, ceph_url
+  </sql>
+  <sql id="Blob_Column_List">
+    logo
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfigExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from inc_config
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfigExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from inc_config
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0">
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from inc_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from inc_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfigExample">
+    delete from inc_config
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfig">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into inc_config (inc_id, history_version_type, history_version_param, 
+      inc_ratio, user_ratio, per_user_quota, 
+      inc_total_quota, create_time, is_delete, 
+      link_man, telephone, email, 
+      ceph_access_key, ceph_secret_key, ceph_url, 
+      logo)
+    values (#{incId,jdbcType=BIGINT}, #{historyVersionType,jdbcType=CHAR}, #{historyVersionParam,jdbcType=INTEGER}, 
+      #{incRatio,jdbcType=INTEGER}, #{userRatio,jdbcType=INTEGER}, #{perUserQuota,jdbcType=INTEGER}, 
+      #{incTotalQuota,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=CHAR}, 
+      #{linkMan,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{cephAccessKey,jdbcType=VARCHAR}, #{cephSecretKey,jdbcType=VARCHAR}, #{cephUrl,jdbcType=VARCHAR}, 
+      #{logo,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfig">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into inc_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="incId != null">
+        inc_id,
+      </if>
+      <if test="historyVersionType != null">
+        history_version_type,
+      </if>
+      <if test="historyVersionParam != null">
+        history_version_param,
+      </if>
+      <if test="incRatio != null">
+        inc_ratio,
+      </if>
+      <if test="userRatio != null">
+        user_ratio,
+      </if>
+      <if test="perUserQuota != null">
+        per_user_quota,
+      </if>
+      <if test="incTotalQuota != null">
+        inc_total_quota,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="linkMan != null">
+        link_man,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="cephAccessKey != null">
+        ceph_access_key,
+      </if>
+      <if test="cephSecretKey != null">
+        ceph_secret_key,
+      </if>
+      <if test="cephUrl != null">
+        ceph_url,
+      </if>
+      <if test="logo != null">
+        logo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="incId != null">
+        #{incId,jdbcType=BIGINT},
+      </if>
+      <if test="historyVersionType != null">
+        #{historyVersionType,jdbcType=CHAR},
+      </if>
+      <if test="historyVersionParam != null">
+        #{historyVersionParam,jdbcType=INTEGER},
+      </if>
+      <if test="incRatio != null">
+        #{incRatio,jdbcType=INTEGER},
+      </if>
+      <if test="userRatio != null">
+        #{userRatio,jdbcType=INTEGER},
+      </if>
+      <if test="perUserQuota != null">
+        #{perUserQuota,jdbcType=INTEGER},
+      </if>
+      <if test="incTotalQuota != null">
+        #{incTotalQuota,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=CHAR},
+      </if>
+      <if test="linkMan != null">
+        #{linkMan,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="cephAccessKey != null">
+        #{cephAccessKey,jdbcType=VARCHAR},
+      </if>
+      <if test="cephSecretKey != null">
+        #{cephSecretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="cephUrl != null">
+        #{cephUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null">
+        #{logo,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfigExample" resultType="java.lang.Long">
+    select count(*) from inc_config
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update inc_config
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.incId != null">
+        inc_id = #{record.incId,jdbcType=BIGINT},
+      </if>
+      <if test="record.historyVersionType != null">
+        history_version_type = #{record.historyVersionType,jdbcType=CHAR},
+      </if>
+      <if test="record.historyVersionParam != null">
+        history_version_param = #{record.historyVersionParam,jdbcType=INTEGER},
+      </if>
+      <if test="record.incRatio != null">
+        inc_ratio = #{record.incRatio,jdbcType=INTEGER},
+      </if>
+      <if test="record.userRatio != null">
+        user_ratio = #{record.userRatio,jdbcType=INTEGER},
+      </if>
+      <if test="record.perUserQuota != null">
+        per_user_quota = #{record.perUserQuota,jdbcType=INTEGER},
+      </if>
+      <if test="record.incTotalQuota != null">
+        inc_total_quota = #{record.incTotalQuota,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.isDelete != null">
+        is_delete = #{record.isDelete,jdbcType=CHAR},
+      </if>
+      <if test="record.linkMan != null">
+        link_man = #{record.linkMan,jdbcType=VARCHAR},
+      </if>
+      <if test="record.telephone != null">
+        telephone = #{record.telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null">
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cephAccessKey != null">
+        ceph_access_key = #{record.cephAccessKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cephSecretKey != null">
+        ceph_secret_key = #{record.cephSecretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cephUrl != null">
+        ceph_url = #{record.cephUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logo != null">
+        logo = #{record.logo,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update inc_config
+    set id = #{record.id,jdbcType=BIGINT},
+      inc_id = #{record.incId,jdbcType=BIGINT},
+      history_version_type = #{record.historyVersionType,jdbcType=CHAR},
+      history_version_param = #{record.historyVersionParam,jdbcType=INTEGER},
+      inc_ratio = #{record.incRatio,jdbcType=INTEGER},
+      user_ratio = #{record.userRatio,jdbcType=INTEGER},
+      per_user_quota = #{record.perUserQuota,jdbcType=INTEGER},
+      inc_total_quota = #{record.incTotalQuota,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      is_delete = #{record.isDelete,jdbcType=CHAR},
+      link_man = #{record.linkMan,jdbcType=VARCHAR},
+      telephone = #{record.telephone,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      ceph_access_key = #{record.cephAccessKey,jdbcType=VARCHAR},
+      ceph_secret_key = #{record.cephSecretKey,jdbcType=VARCHAR},
+      ceph_url = #{record.cephUrl,jdbcType=VARCHAR},
+      logo = #{record.logo,jdbcType=LONGVARBINARY}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update inc_config
+    set id = #{record.id,jdbcType=BIGINT},
+      inc_id = #{record.incId,jdbcType=BIGINT},
+      history_version_type = #{record.historyVersionType,jdbcType=CHAR},
+      history_version_param = #{record.historyVersionParam,jdbcType=INTEGER},
+      inc_ratio = #{record.incRatio,jdbcType=INTEGER},
+      user_ratio = #{record.userRatio,jdbcType=INTEGER},
+      per_user_quota = #{record.perUserQuota,jdbcType=INTEGER},
+      inc_total_quota = #{record.incTotalQuota,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      is_delete = #{record.isDelete,jdbcType=CHAR},
+      link_man = #{record.linkMan,jdbcType=VARCHAR},
+      telephone = #{record.telephone,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      ceph_access_key = #{record.cephAccessKey,jdbcType=VARCHAR},
+      ceph_secret_key = #{record.cephSecretKey,jdbcType=VARCHAR},
+      ceph_url = #{record.cephUrl,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfig">
+    update inc_config
+    <set>
+      <if test="incId != null">
+        inc_id = #{incId,jdbcType=BIGINT},
+      </if>
+      <if test="historyVersionType != null">
+        history_version_type = #{historyVersionType,jdbcType=CHAR},
+      </if>
+      <if test="historyVersionParam != null">
+        history_version_param = #{historyVersionParam,jdbcType=INTEGER},
+      </if>
+      <if test="incRatio != null">
+        inc_ratio = #{incRatio,jdbcType=INTEGER},
+      </if>
+      <if test="userRatio != null">
+        user_ratio = #{userRatio,jdbcType=INTEGER},
+      </if>
+      <if test="perUserQuota != null">
+        per_user_quota = #{perUserQuota,jdbcType=INTEGER},
+      </if>
+      <if test="incTotalQuota != null">
+        inc_total_quota = #{incTotalQuota,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=CHAR},
+      </if>
+      <if test="linkMan != null">
+        link_man = #{linkMan,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="cephAccessKey != null">
+        ceph_access_key = #{cephAccessKey,jdbcType=VARCHAR},
+      </if>
+      <if test="cephSecretKey != null">
+        ceph_secret_key = #{cephSecretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="cephUrl != null">
+        ceph_url = #{cephUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null">
+        logo = #{logo,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfig">
+    update inc_config
+    set inc_id = #{incId,jdbcType=BIGINT},
+      history_version_type = #{historyVersionType,jdbcType=CHAR},
+      history_version_param = #{historyVersionParam,jdbcType=INTEGER},
+      inc_ratio = #{incRatio,jdbcType=INTEGER},
+      user_ratio = #{userRatio,jdbcType=INTEGER},
+      per_user_quota = #{perUserQuota,jdbcType=INTEGER},
+      inc_total_quota = #{incTotalQuota,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_delete = #{isDelete,jdbcType=CHAR},
+      link_man = #{linkMan,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      ceph_access_key = #{cephAccessKey,jdbcType=VARCHAR},
+      ceph_secret_key = #{cephSecretKey,jdbcType=VARCHAR},
+      ceph_url = #{cephUrl,jdbcType=VARCHAR},
+      logo = #{logo,jdbcType=LONGVARBINARY}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.quarkdata.yunpan.api.model.dataobj.IncConfig">
+    update inc_config
+    set inc_id = #{incId,jdbcType=BIGINT},
+      history_version_type = #{historyVersionType,jdbcType=CHAR},
+      history_version_param = #{historyVersionParam,jdbcType=INTEGER},
+      inc_ratio = #{incRatio,jdbcType=INTEGER},
+      user_ratio = #{userRatio,jdbcType=INTEGER},
+      per_user_quota = #{perUserQuota,jdbcType=INTEGER},
+      inc_total_quota = #{incTotalQuota,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_delete = #{isDelete,jdbcType=CHAR},
+      link_man = #{linkMan,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      ceph_access_key = #{cephAccessKey,jdbcType=VARCHAR},
+      ceph_secret_key = #{cephSecretKey,jdbcType=VARCHAR},
+      ceph_url = #{cephUrl,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectForUpdate" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from inc_config
+    where id = #{id,jdbcType=BIGINT} for update
+  </select>
+</mapper>

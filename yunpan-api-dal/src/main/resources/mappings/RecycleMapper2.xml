@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.RecycleMapper2">
+	<resultMap id="BaseResultMap"
+		type="com.quarkdata.yunpan.api.model.dataobj.Recycle">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="inc_id" jdbcType="BIGINT" property="incId" />
+		<result column="document_id" jdbcType="BIGINT" property="documentId" />
+		<result column="document_version_id" jdbcType="BIGINT"
+			property="documentVersionId" />
+		<result column="create_user" jdbcType="BIGINT" property="createUser" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="is_delete" jdbcType="CHAR" property="isDelete" />
+		<result column="is_visiable" jdbcType="CHAR" property="isVisiable" />
+		<result column="document_parent_id" jdbcType="BIGINT" property="documentParentId" />
+		<result column="document_id_path" jdbcType="VARCHAR" property="documentIdPath" />
+	</resultMap>
+
+	<resultMap id="RecycleFileVO"
+		type="com.quarkdata.yunpan.api.model.vo.RecycleFileVO">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="document_name" jdbcType="VARCHAR" property="documentName" />
+		<result column="document_type" jdbcType="VARCHAR" property="documentType" />
+		<result column="size" jdbcType="BIGINT" property="size" />
+		<result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+		<result column="delete_time_stamp" jdbcType="TIMESTAMP" property="deleteTimeStamp" />
+		<result column="remain_time" jdbcType="INTEGER" property="remainTime" />
+		<result column="id_path" jdbcType="VARCHAR" property="idPath" />
+	</resultMap>
+
+	<!-- 批量增加recycle -->
+	<insert id="addRecycleByBatch">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into recycle (inc_id, document_id, document_version_id,
+		create_user, create_time, is_delete,
+		is_visiable,document_parent_id,document_id_path)
+		values
+		<foreach collection="recycleList" index="index" item="item"
+			separator=",">
+			(#{item.incId,jdbcType=BIGINT},
+			#{item.documentId,jdbcType=BIGINT},
+			#{item.documentVersionId,jdbcType=BIGINT},
+			#{item.createUser,jdbcType=BIGINT},
+			#{item.createTime,jdbcType=TIMESTAMP},
+			#{item.isDelete,jdbcType=CHAR},
+			#{item.isVisiable,jdbcType=CHAR},#{item.documentParentId,jdbcType=BIGINT},#{item.documentIdPath,jdbcType=BIGINT})
+		</foreach>
+	</insert>
+
+	<!-- 获取存在在recycle中的子一级文档id列表 -->
+	<select id="getDocIdListByDocParentIdInRecycle" parameterType="java.lang.Long"
+		resultType="java.lang.Long">
+		select document_id from recycle where document_parent_id =
+		#{folderId}
+	</select>
+
+	<!-- 获取存在在recycle中的所有子文档列表 -->
+	<select id="getAllChildDocIdByDocParentIdInRecycle"
+		parameterType="java.lang.String" resultType="java.lang.Long">
+		select document_id from
+		recycle where document_id_path like '%/${folderId}/%'
+	</select>
+
+	<!-- 获取回收站中所有可见的文档id列表 -->
+	<select id="getVisibleDocIdList" resultType="java.lang.Long">
+		select document_id
+		from recycle where is_delete = '0' and is_visiable = '1' and inc_id =
+		#{incId} and create_user = #{userId}
+	</select>
+
+	<!-- 获取回收站中所有可见的文档 -->
+	<select id="getVisibleDocList" resultMap="RecycleFileVO">
+		select
+		d.id,d.id_path,d.document_version_id,d.document_name,d.size,d.type,d.parent_id,d.document_type,r.create_time as
+		delete_time,r.create_time AS delete_time_stamp, TIMESTAMPDIFF(DAY,now(),date_add(r.create_time, interval
+		30 day)) as remain_time, CASE WHEN d.document_type = 'dir' THEN 0 ELSE
+		1
+		END AS document_type_order from document d left join recycle r on
+		d.id =
+		r.document_id where r.is_delete = '0' and r.is_visiable = '1'
+		and
+		r.inc_id = #{incId} and r.create_user = #{userId}
+		<if test="filter != null ">
+			and d.document_name like concat(concat('%',#{filter}),'%')
+		</if>
+		order by
+		document_type_order asc,r.create_time desc;
+	</select>
+
+	<!-- 批量彻底删除文档 -->
+	<update id="removeDocCompletely">
+		update recycle set is_delete = '1' where document_id in
+		<foreach collection="docIdList" index="index" item="item"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+
+	<!-- 获取recycle表中doc id对应的version id -->
+	<select id="getVersionIdFromDocId" resultType="java.lang.Long">
+		select
+		document_version_id from recycle where document_id = #{docId}
+	</select>
+
+	<!-- 获取文件名 -->
+	<select id="getDocNames" resultType="java.lang.String">
+		select document_name from document where id in
+		<foreach collection="docIds" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<!-- 获取回收站中已经保存了30天的文档的incId -->
+	<select id="getDeletingIncId" resultType="java.lang.Long">
+		select r.inc_id from
+		recycle r where r.is_delete = '0' and r.is_visiable = '1'
+		and TIMESTAMPDIFF(DAY,now(),date_add(r.create_time, interval 30 day)) =
+		0;
+	</select>
+
+	<!-- 获取回收站中某inc下已经保存了30天的文档id -->
+	<select id="getDeletingDocIdByIncId" resultType="java.lang.Long">
+		select
+		r.document_id from recycle r where r.inc_id=#{incId} and r.is_delete =
+		'0' and r.is_visiable = '1'
+		and TIMESTAMPDIFF(DAY,now(),date_add(r.create_time, interval 30 day)) =
+		0;
+	</select>
+
+</mapper>

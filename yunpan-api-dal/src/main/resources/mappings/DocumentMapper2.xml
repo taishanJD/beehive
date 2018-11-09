@@ -1,0 +1,2258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.DocumentMapper2">
+	<resultMap id="BaseResultMap"
+		type="com.quarkdata.yunpan.api.model.dataobj.Document">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="inc_id" jdbcType="BIGINT" property="incId" />
+		<result column="parent_id" jdbcType="BIGINT" property="parentId" />
+		<result column="document_version_id" jdbcType="BIGINT"
+			property="documentVersionId" />
+		<result column="document_name" jdbcType="VARCHAR" property="documentName" />
+		<result column="type" jdbcType="CHAR" property="type" />
+		<result column="document_type" jdbcType="VARCHAR" property="documentType" />
+		<result column="id_path" jdbcType="VARCHAR" property="idPath" />
+		<result column="size" jdbcType="BIGINT" property="size" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="BIGINT" property="createUser" />
+		<result column="create_username" jdbcType="VARCHAR" property="createUsername" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="BIGINT" property="updateUser" />
+		<result column="update_username" jdbcType="VARCHAR" property="updateUsername" />
+		<result column="is_delete" jdbcType="CHAR" property="isDelete" />
+		<result column="is_share" jdbcType="CHAR" property="isShare" />
+		<result column="is_lock" jdbcType="CHAR" property="isLock" />
+		<result column="lock_time" jdbcType="TIMESTAMP" property="lockTime" />
+		<result column="lock_user" jdbcType="BIGINT" property="lockUser" />
+		<result column="lock_username" jdbcType="VARCHAR" property="lockUsername" />
+		<result column="description" jdbcType="VARCHAR" property="description" />
+	</resultMap>
+	<resultMap id="BaseResultMapCarryCol_tags"
+		type="com.quarkdata.yunpan.api.model.vo.DocumentExtend">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="inc_id" jdbcType="BIGINT" property="incId" />
+		<result column="parent_id" jdbcType="BIGINT" property="parentId" />
+		<result column="document_version_id" jdbcType="BIGINT"
+			property="documentVersionId" />
+		<result column="document_name" jdbcType="VARCHAR" property="documentName" />
+		<result column="type" jdbcType="CHAR" property="type" />
+		<result column="document_type" jdbcType="VARCHAR" property="documentType" />
+		<result column="mime_type" jdbcType="CHAR" property="mimeType" />
+		<result column="id_path" jdbcType="VARCHAR" property="idPath" />
+		<result column="size" jdbcType="BIGINT" property="size" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="BIGINT" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="BIGINT" property="updateUser" />
+		<result column="update_username" jdbcType="VARCHAR" property="updateUsername" />
+		<result column="is_delete" jdbcType="CHAR" property="isDelete" />
+		<result column="is_share" jdbcType="CHAR" property="isShare" />
+		<result column="is_lock" jdbcType="CHAR" property="isLock" />
+		<result column="lock_time" jdbcType="TIMESTAMP" property="lockTime" />
+		<result column="lock_user" jdbcType="BIGINT" property="lockUser" />
+		<result column="lock_username" jdbcType="VARCHAR" property="lockUsername" />
+		<result column="description" jdbcType="VARCHAR" property="description" />
+		<result column="permission" property="permission" />
+		<result column="is_col" property="isCol" />
+		<result column="is_set_permission" property="isSetPermission" />
+		<collection property="tags"
+			ofType="com.quarkdata.yunpan.api.model.dataobj.Tag">
+			<id property="id" jdbcType="BIGINT" column="tag_id" />
+			<result property="tagName" column="tag_name" jdbcType="VARCHAR" />
+		</collection>
+	</resultMap>
+	<resultMap type="com.quarkdata.quark.share.model.vo.UserRankVO" id="userRankMap">
+		<result column="create_username" property="createUserName"/>
+		<result column="sum_size" property="SumSize"/>
+	</resultMap>
+	<resultMap id="documentZtreeVOMap" type="com.quarkdata.yunpan.api.model.vo.DocumentZtreeVO">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="inc_id" jdbcType="BIGINT" property="incId" />
+		<result column="parent_id" jdbcType="BIGINT" property="parentId" />
+		<result column="document_version_id" jdbcType="BIGINT" property="documentVersionId" />
+		<result column="document_name" jdbcType="VARCHAR" property="documentName" />
+		<result column="document_name" jdbcType="VARCHAR" property="name" />
+		<result column="type" jdbcType="CHAR" property="type" />
+		<result column="document_type" jdbcType="VARCHAR" property="documentType" />
+		<result column="mime_type" jdbcType="CHAR" property="mimeType" />
+		<result column="id_path" jdbcType="VARCHAR" property="idPath" />
+		<result column="size" jdbcType="BIGINT" property="size" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="BIGINT" property="createUser" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_user" jdbcType="BIGINT" property="updateUser" />
+		<result column="update_username" jdbcType="VARCHAR" property="updateUsername" />
+		<result column="is_delete" jdbcType="CHAR" property="isDelete" />
+		<result column="is_share" jdbcType="CHAR" property="isShare" />
+		<result column="is_lock" jdbcType="CHAR" property="isLock" />
+		<result column="lock_time" jdbcType="TIMESTAMP" property="lockTime" />
+		<result column="lock_user" jdbcType="BIGINT" property="lockUser" />
+		<result column="lock_username" jdbcType="VARCHAR" property="lockUsername" />
+		<result column="is_parent" jdbcType="CHAR" property="isParent" />
+		<result column="description" jdbcType="VARCHAR" property="description" />
+		<result column="permission" property="permission" />
+		<collection property="children"
+					ofType="com.quarkdata.yunpan.api.model.vo.DocumentZtreeVO">
+		</collection>
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		a.id, a.inc_id, a.parent_id, a.document_version_id,
+		a.document_name, a.type,
+		a.document_type, 
+		a.id_path,
+		a.size, a.create_time, a.create_user, a.update_time, a.update_user, a.update_username,
+		a.is_delete,
+		a.is_share,
+		a.is_lock, a.lock_user, a.lock_username,
+		a.description
+	</sql>
+	
+	<select id="getAdminFileList" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+			<include refid="Base_Column_List" />,
+			tag.id tag_id,
+		 	tag.tag_name , "99" AS permission,
+			IF ((dp.id IS null),false,true) is_set_permission,
+			IF ((cdr.id IS NULL), FALSE, TRUE) is_col,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+		0
+		ELSE
+		1
+		END AS document_type_order
+		FROM (SELECT  *
+			,
+		CASE
+		WHEN document_type = 'dir' THEN
+			0
+		ELSE
+			1
+		END AS document_type_order
+		FROM  document WHERE inc_id = #{incId} AND type = 0 AND is_delete = 0
+		AND id &lt;&gt; #{parentId,jdbcType=BIGINT}
+		<choose>
+			<when test="documentName != null and documentName.trim()!='' and isExact != 1">
+				AND document_name LIKE '%${documentName}%'
+				<if test="parentPath!=null and parentPath.trim()!=''">
+					AND id_path LIKE '${parentPath}%'/*递归查询文件名*/
+				</if>
+			</when>
+			<otherwise>
+				AND parent_id = #{parentId,jdbcType=BIGINT}
+				<if test="isExact == 1">
+					AND  document_name = #{documentName}
+				</if>
+			</otherwise>
+		</choose>
+		ORDER BY
+			document_type_order ASC,
+			update_time DESC
+        <if test="startNum != null and startNum >= 0 and pageSize != null and pageSize > 0">
+			LIMIT #{startNum}, #{pageSize}
+		</if>
+        ) a
+		LEFT JOIN document_permission dp ON a.id = dp.document_id
+		LEFT JOIN collect_document_rel cdr ON a.id = cdr.document_id
+			AND cdr.user_id = #{userId}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+		ORDER BY document_type_order ASC,a.update_time DESC
+	</select>
+
+	<select id="getOrganizedFiles" parameterType="map" resultMap="BaseResultMap">
+		SELECT DISTINCT
+		<include refid="Base_Column_List" />
+		,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+			0
+		ELSE
+			1
+		END AS document_type_order
+		FROM
+		(
+		SELECT
+		d.*
+		FROM
+		document d
+		WHERE
+		d.parent_id = #{parentId,jdbcType=BIGINT}
+		AND d.type = '0'
+		AND d.inc_id = #{incId,jdbcType=BIGINT}
+		AND d.is_delete = '0'
+		) a
+		INNER JOIN (
+		SELECT DISTINCT
+		dp.document_id,
+		d.id_path
+		FROM
+		document_permission dp
+		INNER JOIN document d ON dp.document_id = d.id
+		WHERE
+		(
+		dp.receiver_id = #{userId,jdbcType=BIGINT}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupId != null">
+			OR (
+			dp.receiver_id = #{userGroupId,jdbcType=BIGINT}
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>
+		) b ON a.id_path LIKE CONCAT(b.id_path, '%')
+		ORDER BY document_type_order ASC,a.update_time DESC
+	</select>
+
+	<select id="getOrganizedFilesCarryCol_tags" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		tag.id tag_id,
+		 	tag.tag_name ,
+		IF ((cdr.id IS NULL), FALSE, TRUE) is_col
+		,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+			0
+		ELSE
+			1
+		END AS document_type_order
+		FROM
+		(
+		SELECT DISTINCT
+		<include refid="Base_Column_List" />
+		FROM
+		(
+		SELECT
+		d.*
+		FROM
+		document d
+		WHERE
+		d.parent_id = #{parentId,jdbcType=BIGINT}
+		AND d.type = '0'
+		AND d.inc_id = #{incId,jdbcType=BIGINT}
+		AND d.is_delete = '0'
+		) a
+		INNER JOIN (
+		SELECT DISTINCT
+		dp.document_id,
+		d.id_path
+		FROM
+		document_permission dp
+		INNER JOIN document d ON dp.document_id = d.id
+		WHERE
+		(
+		dp.receiver_id = #{userId,jdbcType=BIGINT}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in 
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>
+		) b ON a.id_path LIKE CONCAT(b.id_path, '%')
+		) a
+		LEFT JOIN collect_document_rel cdr ON a.id = cdr.document_id
+		AND cdr.user_id = #{userId,jdbcType=BIGINT}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+		<if test="documentName != null">
+			WHERE a.document_name LIKE '%${documentName}%'
+		</if>
+		ORDER BY document_type_order ASC,a.update_time DESC
+		<if test="startNum != null and startNum >= 0 and pageSize != null and pageSize > 0">
+			LIMIT #{startNum}, #{pageSize}
+		</if>
+	</select>
+
+	<select id="getOrganizedAllFilesCarryCol_tags" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		tag.id tag_id,
+		tag.tag_name ,
+		IF ((cdr.id IS NULL), FALSE, TRUE) is_col,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+			0
+		ELSE
+			1
+		END AS document_type_order
+		FROM (SELECT * from document
+		WHERE type = '0'
+		AND inc_id = #{incId,jdbcType=BIGINT}
+		AND is_delete = '0'
+		AND id &lt;&gt; #{parentId,jdbcType=BIGINT}
+		<choose>
+			<when test="documentName != null and documentName.trim()!='' and isExact != 1">
+				AND document_name LIKE '%${documentName}%'
+				<if test="parentPath!=null and parentPath.trim()!=''">
+					AND id_path LIKE '${parentPath}%'/*递归查询文件名*/
+				</if>
+			</when>
+			<otherwise>
+				AND parent_id = #{parentId,jdbcType=BIGINT}
+				<if test="isExact == 1">
+					AND  document_name = #{documentName}
+				</if>
+			</otherwise>
+		</choose>
+		<if test="startNum != null and startNum >= 0 and pageSize != null and pageSize > 0">
+			LIMIT #{startNum}, #{pageSize}
+		</if>
+		) a
+		LEFT JOIN collect_document_rel cdr ON a.id = cdr.document_id AND cdr.user_id = #{userId,jdbcType=BIGINT}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+		ORDER BY document_type_order ASC,a.update_time DESC
+	</select>
+
+	<select id="getPersonalFilesCarryCol_tags" parameterType="map"
+		resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		IF ((b.id IS NULL), FALSE, TRUE) is_col,
+		tag.id tag_id,
+		tag.tag_name,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+			0
+		ELSE
+			1
+		END AS document_type_order
+		FROM
+		(
+		SELECT
+		*
+		FROM
+		document d
+		WHERE
+		d.inc_id = #{incId,jdbcType=BIGINT}
+		AND d.create_user = #{userId,jdbcType=BIGINT}
+		AND d.type = '1'
+		AND d.parent_id = #{parentId,jdbcType=BIGINT}
+		AND d.is_delete = '0'
+		AND d.id &lt;&gt; #{parentId,jdbcType=BIGINT}
+		) a
+		LEFT JOIN (
+		SELECT
+		cdr.*
+		FROM
+		collect_document_rel cdr
+		) b ON a.id = b.document_id
+		AND a.create_user = b.user_id
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tag.id
+		= tdr.tag_id
+		AND tag.is_delete = '0'
+
+		<if test="documentName != null">
+		WHERE a.document_name LIKE '%${documentName}%'
+			<if test="isExact == 1">
+				and a.document_name= #{documentName}
+			</if>
+		</if>
+		ORDER BY document_type_order ASC,a.update_time DESC
+		<if test="startNum != null and startNum >= 0 and pageSize != null and pageSize > 0">
+			LIMIT #{startNum}, #{pageSize}
+		</if>
+	</select>
+	<!--带条件搜索个人文件-->
+	<select id="getPersonalFilesByDocName" parameterType="map"
+			resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		tag.id tag_id,
+		tag.tag_name ,
+		IF ((cdr.id IS NULL), FALSE, TRUE) is_col,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+		0
+		ELSE
+		1
+		END AS document_type_order
+		FROM document a
+		LEFT JOIN collect_document_rel cdr ON a.id = cdr.document_id
+		AND cdr.user_id = #{userId,jdbcType=BIGINT}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+		WHERE a.type = '1'
+		AND a.inc_id = #{incId,jdbcType=BIGINT}		
+		AND a.create_user = #{userId,jdbcType=BIGINT}
+		AND a.is_delete = '0'
+		AND a.document_name LIKE '%${documentName}%'
+		AND a.id &lt;&gt; #{parentId,jdbcType=BIGINT}
+		<choose>
+			<when test="parentPath!=null and parentPath.trim()!=''">
+				AND a.id_path LIKE '${parentPath}%'/*递归查询文件名*/
+			</when>
+			<otherwise>
+				AND a.parent_id = #{parentId,jdbcType=BIGINT}
+			</otherwise>
+		</choose>
+		ORDER BY document_type_order ASC,a.update_time DESC
+		<if test="startNum != null and startNum >= 0 and pageSize != null and pageSize > 0">
+			LIMIT #{startNum}, #{pageSize}
+		</if>
+	</select>
+
+	<select id="getExternalSpaceFilesCarryCol_tags" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		tag.id tag_id,
+		tag.tag_name ,
+		IF ((cdr.id IS NULL), FALSE, TRUE) is_col,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+		0
+		ELSE
+		1
+		END AS document_type_order
+		FROM document a
+		LEFT JOIN collect_document_rel cdr ON a.id = cdr.document_id
+		AND cdr.user_id = #{userId,jdbcType=BIGINT}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+		WHERE a.type = '3'
+		AND a.inc_id = #{incId,jdbcType=BIGINT}
+		AND a.is_delete = '0'
+		<choose>
+			<when test="documentName != null and documentName.trim()!=''and isExact != 1">
+				AND a.document_name LIKE '%${documentName}%'
+				<if test="parentPath!=null and parentPath.trim()!=''">
+					AND a.id_path LIKE '${parentPath}%'/*递归查询文件名*/
+				</if>
+			</when>
+			<otherwise>
+				AND a.parent_id = #{parentId,jdbcType=BIGINT}
+				<if test="isExact == 1">
+					AND  a.document_name = #{documentName}
+				</if>
+			</otherwise>
+		</choose>
+		ORDER BY document_type_order ASC,a.update_time DESC
+	</select>
+	
+	<select id="checkUploadPrivilege" parameterType="map" resultType="java.lang.Long">
+	    SELECT
+			COUNT(a.document_id)
+		FROM
+			(
+				SELECT DISTINCT
+					dp.document_id
+				FROM
+					document_permission dp
+				WHERE
+					(
+						(
+							dp.receiver_id = #{userId}
+							AND (dp.receiver_type = '0' OR dp.receiver_type='3')/*3为外部账号，外部账号也具有写权限*/
+							AND dp.permission IN ('1', '2', '3', '99')
+						)
+						<if test="userGroupIds != null and userGroupIds.size() > 0">
+							OR (
+								dp.receiver_id IN 
+								<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+									#{item}
+								</foreach>
+								AND dp.receiver_type = '1'
+								AND dp.permission IN ('1', '2')
+							)
+						</if>
+						OR (
+							dp.receiver_id = #{deptId}
+							AND dp.receiver_type = '2'
+							AND dp.permission IN ('1', '2')
+						)
+					)
+				AND dp.document_id = #{dirId}
+			) a
+  	</select>
+  	
+  	<!-- 1.统计个人空间 -->
+  	<!-- 1-1.统计未删除个人文档占用空间 -->
+  	<select id="sumUserDocumentUndeleted" parameterType="java.lang.Long" resultType="java.lang.Long">
+		SELECT
+			COALESCE (SUM(d.size), 0)
+		FROM
+			document d,
+			document_version dv
+		WHERE
+			d.id = dv.document_id
+		AND d.inc_id = #{incId}
+		AND d.type = 1
+		AND d.is_delete = 0
+	</select>
+	<!-- 1-1-2.统计未删除个人文档占用空间 (以当前登录用户查询)-->
+	<select id="sumUserDocumentUndeletedByCurrentUser" parameterType="java.util.Map" resultType="java.lang.Long">
+		SELECT
+		COALESCE (SUM(d.size), 0)
+		FROM
+		document d,
+		document_version dv
+		WHERE
+		d.id = dv.document_id
+		AND d.inc_id = #{incId}
+		AND d.type = 1
+		AND d.is_delete = 0
+		AND d.create_user = #{userId}
+	</select>
+  	<!-- 1-2.统计回收站中未删除个人文档占用空间 -->
+  	<select id="sumUserDocumentInRecycle" parameterType="java.lang.Long" resultType="java.lang.Long">
+		SELECT
+			COALESCE (SUM(d.size), 0)
+		FROM
+			document d,
+			recycle r
+		WHERE
+			d.id = r.document_id
+		AND d.inc_id = #{incId}
+		AND d.type = 1
+		AND r.is_delete = 0
+	</select>
+	<!-- 1-2-2.统计回收站中未删除个人文档占用空间(以当前登录用户查询) -->
+	<select id="sumUserDocumentInRecycleByCurrentUser" parameterType="java.util.Map" resultType="java.lang.Long">
+		SELECT
+		COALESCE (SUM(d.size), 0)
+		FROM
+		document d,
+		recycle r
+		WHERE
+		d.id = r.document_id
+		AND d.inc_id = #{incId}
+		AND d.type = 1
+		AND d.create_user = #{userId}
+		AND r.is_delete = 0
+	</select>
+	<!-- 1-3.查询回收站中未彻底删除的个人文档&弃用 -->
+	<select id="selectUserDocumentInRecycle" parameterType="java.lang.Long" resultType="com.quarkdata.yunpan.api.model.dataobj.Document">
+		SELECT
+		*
+		FROM
+		document d,
+		recycle r
+		WHERE
+		d.id = r.document_id
+		AND d.inc_id = #{incId}
+		AND d.type = 1
+		AND r.is_delete = 0
+	</select>
+	
+	<!-- 2.统计组织空间 -->
+  	<!-- 2-1统计未删除组织文档占用空间 -->
+  	<select id="sumIncDocumentUndeleted" parameterType="java.lang.Long" resultType="java.lang.Long">
+		SELECT
+			COALESCE (SUM(d.size), 0)
+		FROM
+			document d,
+			document_version dv
+		WHERE
+			d.id = dv.document_id
+		AND d.inc_id = #{incId}
+		AND (d.type = 0 OR d.type = 2)
+		AND dv.is_delete = 0
+	</select>
+  	<!-- 2-2统计回收站中未删除组织文档占用空间 -->
+  	<select id="sumIncDocumentInRecycle" parameterType="java.lang.Long" resultType="java.lang.Long">
+		SELECT
+			COALESCE (SUM(d.size), 0)
+		FROM
+			document d,
+			recycle r
+		WHERE
+			d.id = r.document_id
+		AND d.inc_id = #{incId}
+		AND (d.type = 0 OR d.type = 2)
+		AND r.is_delete = 0
+	</select>
+	<!-- 2-3查询未删除的所有版本的组织文档&弃用 -->
+	<select id="selectIncDocumentNotDeleted" parameterType="java.lang.Long" resultType="com.quarkdata.yunpan.api.model.dataobj.Document">
+		SELECT
+			d.*
+		FROM
+			document d,
+			document_version v
+		WHERE
+			d.id = v.document_id
+		AND d.inc_id = #{incId}
+		AND d.is_delete = 0
+		AND d.type = 0;
+	</select>
+	<!-- 2-4查询回收站中未彻底删除的组织文档 &弃用-->
+	<select id="selectIncDocumentInRecycle" parameterType="java.lang.Long" resultType="com.quarkdata.yunpan.api.model.dataobj.Document">
+		SELECT
+			d.*
+		FROM
+			document d,
+			document_version v,
+			recycle r
+		WHERE
+			d.id = v.document_id = r.document_id
+		AND d.inc_id = #{incId}
+		AND d.type = 0
+		AND d.is_delete = 1
+		AND r.is_delete = 0
+	</select>
+	
+	<!-- 3.查询用户使用量排行 -->
+	<select id="getUserRank" parameterType="java.lang.Long" resultMap="userRankMap">
+		SELECT
+			d.create_username ,
+			COALESCE (SUM(size), 0) sum_size
+		FROM
+			document d
+		WHERE
+			d.inc_id = #{incId}
+		AND d.is_delete = 0
+		AND d.type = 1
+		GROUP BY
+			d.create_user
+		ORDER BY
+			sum_size DESC
+		LIMIT 0,
+		 8
+	</select>
+	
+	<!-- 获取一个文件夹中所有尚未删除的子文档 -->
+	<select id="getAllNotDeleteChildDocIdByFolderId" parameterType="java.lang.Long" resultType="java.lang.Long">
+  		select id from document where is_delete = '0' and id_path like '%/${folderId}%'
+  	</select>
+  	
+  	<!-- 获取一个文件夹下所有的文档 -->
+  	<select id="getAllChildDocIdByFolderId" parameterType="java.lang.Long" resultType="java.lang.Long">
+  		select id from document where id_path like '%/${folderId}%'
+  	</select>
+  	
+  	<!-- 根据id批量删除文件或文件夹（放入回收站） -->
+  	<update id="delDocByBatch" parameterType="java.util.List">
+  		update document set update_user=#{updateUser},update_username = #{updateUsername},update_time = now(),is_delete = '1' where id  in
+  		<foreach collection="docIds" index="index" item="item" open="(" separator="," close=")">
+        	 #{item}    
+        </foreach>
+  	</update>
+  	
+  	<!-- 获取一个文件夹的所有子一级文档 -->
+  	<select id="getDocIdListByDocParentIdInDocument" parameterType="java.lang.Long" resultType="java.lang.Long">
+  		select id from document where parent_id = #{docId}
+  	</select>
+  	
+  	<!-- 获取父文档的is_delete值 -->
+  	<select id="getParentDocIsDeleteByDocIds" parameterType="java.util.List" resultType="java.lang.String">
+  		select is_delete from document where id in (select parent_id from document where id in 
+  		<foreach collection="docIds" index="index" item="item" open="(" separator="," close=")">
+        	 #{item}    
+        </foreach>
+        )
+  	</select>
+  	
+  	<!-- 批量还原文档 -->
+  	<update id="recoverDocByDocIds">
+  		update document set update_user=#{updateUser},update_time = now(),is_delete = '0' where id in
+  		<foreach collection="docIds" index="index" item="item" open="(" separator="," close=")">
+        	 #{item}    
+        </foreach>
+  	</update>
+	<!--直接修改归档文件夹的大小-->
+	<update id="sumSize" parameterType="map">
+		UPDATE document SET size=(SELECT sumsize FROM (SELECT SUM(size) sumsize FROM document WHERE id_path LIKE '%${documentId}%' AND document_type!='dir' AND is_delete='0')a) WHERE id=#{documentId}
+	</update>
+	<!--获取归档文件夹大小-->
+	<select id="getSumSize" parameterType="map" resultType="java.lang.Long">
+		SELECT SUM(size) sumsize FROM document WHERE id_path LIKE '%${documentId}%' AND document_type!='dir' AND is_delete='0'
+	</select>
+
+	<!--获取需要归档文件需要的dir集合-->
+	<select id="getAlldir" parameterType="map" resultType="java.lang.Long">
+		SELECT id FROM document WHERE id_path LIKE '%${documentId}%' AND document_type='dir' AND is_delete='0'
+	</select>
+	<update id="updateAllSize" parameterType="map" >
+		<foreach collection="documentIds" index="index" item="item" open="(" separator="," close=")">
+			UPDATE document SET size=(SELECT sumsize FROM
+			(SELECT SUM(size) sumsize FROM document WHERE id_path LIKE '%#{item}%' AND document_type!='dir' AND is_delete='0')a)
+		</foreach>
+
+	</update>
+	<select id="getNamesByIds" resultType="java.lang.String">
+		select document_name from document  where id in
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		<if test="orderIds!= null">
+		 order by FIND_IN_SET(ID, #{orderIds})
+		</if>
+	</select>
+	<!--查询满足归档条件的文档-->
+
+	<select id="selectByLastTimeAndDocumentAndTagID" parameterType="map" resultMap="BaseResultMap">
+		SELECT DISTINCT d.*  FROM document d,tag_document_rel tdr WHERE
+		d.is_delete='0'
+		<if test="lastUpdateTime!= null">
+			AND  d.update_time &lt; #{lastUpdateTime}
+		</if>
+		<if test="documentType!= null and documentType.size>0">
+			AND d.document_type IN
+			<foreach collection="documentType" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="tagIdList!=null and tagIdList.size>0">
+			AND
+			d.id=tdr.document_id
+			AND tdr.tag_id IN
+			<foreach collection="tagIdList" index="index" item="item1" open="(" separator="," close=")">
+				#{item1}
+			</foreach>
+		</if>
+		AND d.id_path LIKE '%${path}%'
+		AND (d.type='0' or d.type = '2')
+	</select>
+
+	<!--查询满足归档条件的文档id列表-->
+
+	<select id="selectByLastTimeToListId" parameterType="map" resultType="java.lang.Long">
+		SELECT DISTINCT d.id  FROM document d,tag_document_rel tdr WHERE
+		d.is_delete='0'
+		<if test="lastUpdateTime!= null">
+			AND d.update_time &lt; #{lastUpdateTime}
+		</if>
+		<if test="documentType!= null and documentType.size>0">
+			AND d.document_type IN
+			<foreach collection="documentType" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="tagIdList!=null and tagIdList.size>0">
+			AND
+			d.id=tdr.document_id
+			AND tdr.tag_id IN
+			<foreach collection="tagIdList" index="index" item="item1" open="(" separator="," close=")">
+				#{item1}
+			</foreach>
+		</if>
+		AND d.id_path LIKE '%${path}%'
+		AND (d.type='0' or d.type = '2')
+	</select>
+
+	<!-- 获取一个文件夹下所有未删除的文档 -->
+	<select id="getAllNotDelByFolderId" parameterType="java.lang.Long" resultType="java.lang.Long">
+		select id from document where id_path like '%/${folderId}%' AND type='0' AND  is_delete='0'
+	</select>
+
+	<!-- 获取一个文件夹的所有未删除子一级文档 -->
+	<select id="getNotDelDocParentIdInDocument" parameterType="java.lang.Long" resultType="java.lang.Long">
+		select id from document where parent_id = #{docId} AND type='0' AND  is_delete='0'
+	</select>
+
+	<select id="selectManualProDocList" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM document WHERE id_path LIKE '%${value}%' AND type='0' AND  is_delete='0'
+
+	</select>
+
+<!--按路径查询需要归档的文件id-->
+	<select id="selectByPath" parameterType="java.lang.String" resultType="java.lang.Long">
+		SELECT id FROM document WHERE id_path LIKE '%${value}%' AND type='0' AND  is_delete='0'
+	</select>
+
+	<!--按路径查询需要归档的文件-->
+	<select id="selectDocumentByPath" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM document WHERE id_path LIKE '%${value}%' AND type='0' AND  is_delete='0'
+	</select>
+
+	<!--验证同组织下的同名归档文件-->
+	<select id="checkArchiveName" parameterType="map" resultType="java.lang.Integer">
+		SELECT COUNT(*) from document WHERE inc_id=#{incId,jdbcType=BIGINT} AND parent_id=0 AND type=2 AND document_name=#{archiveName}
+	</select>
+	<!--归档列表-->
+	<select id="getArchivalFile" parameterType="map"
+			resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		a.id, a.inc_id, a.parent_id, a.document_version_id,
+		a.document_name, a.type,
+		a.document_type,
+		a.id_path,
+		a.size, a.create_time, a.create_user, a.update_time, a.update_user,
+		a.is_delete,
+		a.is_share,
+		a.description
+		,tag.id tag_id,
+		tag.tag_name,
+		dp1.permission,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+		0
+		ELSE
+		1
+		END AS document_type_order
+		FROM
+		(
+		SELECT
+		*
+		FROM
+		document d
+		WHERE
+		d.inc_id = #{incId}
+		AND d.id in ((SELECT DISTINCT do.id from document do,document_permission dp where do.id=dp.document_id AND ((
+		dp.receiver_id = #{userId,jdbcType=BIGINT}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>)))
+		AND d.is_delete = '0'
+		AND d.parent_id =#{parentId}
+		AND d.type='2'
+		<if test="documentType != null">
+			AND document_type =#{documentType}
+		</if>
+		<if test="editDay != null">
+			AND d.update_time &gt; #{editDay}
+		</if>
+		<if test="documentName != null">
+			AND d.document_name LIKE '%${documentName}%'
+		</if>
+		) a
+		LEFT JOIN document_permission dp1 ON a.id=dp1.document_id
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tag.id
+		= tdr.tag_id
+		AND tag.is_delete = '0'
+		ORDER BY document_type_order ASC,a.create_time DESC
+	</select>
+	<!--归档列表-条件查询-->
+	<select id="getArchivalFileByMap" parameterType="map"
+			resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		a.id, a.inc_id, a.parent_id, a.document_version_id,
+		a.document_name, a.type,
+		a.document_type,
+		a.id_path,
+		a.size, a.create_time, a.create_user, a.update_time, a.update_user,
+		a.is_delete,
+		a.is_share,
+		a.description
+		,tag.id tag_id,
+		tag.tag_name,
+		dp1.permission,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+		0
+		ELSE
+		1
+		END AS document_type_order
+		FROM
+		(
+		SELECT
+		*
+		FROM
+		document d
+		WHERE
+		d.inc_id = #{incId}
+		AND d.id in ((SELECT DISTINCT do.id from document do,document_permission dp where do.id=dp.document_id AND ((
+		dp.receiver_id = #{userId,jdbcType=BIGINT}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>)))
+		AND d.is_delete = '0'
+		AND d.type='2'
+		<choose>
+			<when test="parentPath!=null and parentPath.trim()!=''">
+				AND d.id_path LIKE '${parentPath}%'/*递归查询文件名*/
+			</when>
+			<otherwise>
+				AND d.parent_id = #{parentId,jdbcType=BIGINT}
+			</otherwise>
+		</choose>
+		<if test="documentType != null">
+			AND document_type =#{documentType}
+		</if>
+		<if test="editDay != null">
+			AND d.update_time &gt; #{editDay}
+		</if>
+		<if test="documentName != null">
+			AND d.document_name LIKE '%${documentName}%'
+		</if>
+		) a
+		LEFT JOIN document_permission dp1 ON a.id=dp1.document_id
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tag.id
+		= tdr.tag_id
+		AND tag.is_delete = '0'
+		ORDER BY document_type_order ASC,a.create_time DESC
+	</select>
+
+	<select id="getNotTopArvhivalFile" parameterType="map"
+			resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		a.id, a.inc_id, a.parent_id, a.document_version_id,
+		a.document_name, a.type,
+		a.document_type,
+		a.id_path,
+		a.size, a.create_time, a.create_user, a.update_time, a.update_user,
+		a.is_delete,
+		a.is_share,
+		a.description
+		,tag.id tag_id,
+		tag.tag_name,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+		0
+		ELSE
+		1
+		END AS document_type_order
+		FROM
+		(
+		SELECT
+		*
+		FROM
+		document d
+		WHERE
+		d.inc_id = #{incId}
+		AND d.is_delete = '0'
+		AND d.type='2'
+		AND d.parent_id = #{parentId,jdbcType=BIGINT}
+		<if test="documentType != null">
+			AND document_type =#{documentType}
+		</if>
+		<if test="editDay != null">
+			AND d.update_time &gt; #{editDay}
+		</if>
+		<if test="documentName != null">
+			AND d.document_name LIKE '%${documentName}%'
+		</if>
+		) a
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tag.id
+		= tdr.tag_id
+		AND tag.is_delete = '0'
+		ORDER BY document_type_order ASC,a.create_time DESC
+	</select>
+    <!--获取一个文件给与自己所有权限中的最高权限-->
+	<select id="getMaxPermission" parameterType="map" resultType="java.lang.String">
+		SELECT MAX(permission) FROM document_permission
+		WHERE inc_id=#{incId}
+		AND document_id=#{documentId}
+		AND ((
+		receiver_id = #{userId,jdbcType=BIGINT}
+		AND receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			receiver_id in
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			receiver_id = #{deptId,jdbcType=BIGINT}
+			AND receiver_type = '2'
+			)
+		</if>)
+	</select>
+	<select id="exists" parameterType="map" resultType="java.lang.Integer">
+	SELECT
+	EXISTS (
+		SELECT
+			document_name
+		FROM
+			`document`
+			<where>
+				is_delete = 0
+				<if test="parentId != null">
+					AND parent_id = #{parentId}
+				</if>
+				<if test="incId != null">
+					AND inc_id = #{incId}
+				</if>
+				<if test="userId != null">
+					AND create_user = #{userId}
+				</if>
+				<if test="type != null">
+					AND type = #{type}
+				</if>
+				<if test="documentName != null and documentName.trim() != ''">
+					AND BINARY document_name = #{documentName}
+				</if>
+			</where>
+	) AS result
+	</select>
+
+
+	<select id="statisticsZoneSize" parameterType="map" resultType="java.lang.Integer">
+		SELECT
+			sum(size) as size
+		FROM
+			document
+		WHERE
+			create_user = #{id}
+		AND is_delete = 0
+	</select>
+
+	<select id="getExterLinkByCode" parameterType="java.lang.String" resultType="com.quarkdata.yunpan.api.model.dataobj.ExternalLink">
+		SELECT
+		*
+		FROM
+		external_link
+		WHERE
+		external_link_code = #{linkCode}
+	</select>
+
+	<select id="getDocPermissionById" parameterType="java.lang.Long" resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentPermission">
+		SELECT
+		*
+		FROM
+		document_permission
+		WHERE
+		document_id = #{parentId}
+	</select>
+
+	<!--获取分享文件夹中的子文件-->
+	<select id="getSubFileList"  resultType="com.quarkdata.yunpan.api.model.vo.DocumentIdExtendVO">
+		SELECT DISTINCT
+		d.id , d.inc_id incId,d.parent_id parentId,d.id documentId,d.document_name documentName,d.document_type documentType,d.size,d.document_version_id,
+		IF((b.id IS NULL), FALSE, TRUE) col
+		-- ,tag.id tag_id,tag.tag_name
+		FROM ((((select *
+		from document_share a
+		where (a.receiver_type=0 and a.receiver_id = #{userId})
+		<if test="groupIds != null">
+			or (a.receiver_type=1 and a.receiver_id in
+			<foreach item="item" index="index" collection="groupIds"
+					 open="(" separator="," close=")">
+				#{item}
+			</foreach>)
+		</if>
+		or (a.receiver_type=2 and a.receiver_id = #{departmentId})
+		) ds
+		join document d on ds.document_id = d.parent_id
+		AND d.inc_id = #{incId}
+		<if test="parentId != null ">
+			and d.parent_id = #{parentId}
+		</if>
+		<if test="documentName != null  documentName != ''">
+			AND d.document_name LIKE '%${documentName}%'
+		</if>))
+		join document_permission dp on d.parent_id = dp.document_id and dp.share_id = ds.id)
+		LEFT JOIN (
+		SELECT
+		cdr.*
+		FROM
+		collect_document_rel cdr
+		) b ON ds.document_id = b.document_id
+		AND #{userId}= b.user_id AND b.inc_id = #{incId}
+		-- LEFT JOIN
+		-- tag_document_rel tdr ON ds.document_id = tdr.document_id
+		-- LEFT JOIN tag ON tag.id
+		-- = tdr.tag_id AND tag.is_delete = '0'
+		order by ds.create_time desc
+	</select>
+	<select id="getSubShareFileList" parameterType="java.util.Map" resultType="com.quarkdata.yunpan.api.model.vo.DocumentExtend">
+		SELECT
+		<include refid="Base_Column_List" />,
+		a.id AS documentId,
+		IF ((b.id IS NULL), FALSE, TRUE) is_col,
+		tag.id tag_id,
+		tag.tag_name,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+		0
+		ELSE
+		1
+		END AS document_type_order
+		FROM
+		(
+		SELECT
+		*
+		FROM
+		document d
+		WHERE
+		d.inc_id = #{incId,jdbcType=BIGINT}
+		AND d.parent_id = #{parentId,jdbcType=BIGINT}
+		AND d.is_delete = '0'
+		) a
+		LEFT JOIN (
+		SELECT
+		cdr.*
+		FROM
+		collect_document_rel cdr
+		) b ON a.id = b.document_id
+		AND b.user_id = #{userId}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tag.id
+		= tdr.tag_id
+		AND tag.is_delete = '0'
+		<if test="documentName != null and documentName != ''">
+			WHERE a.document_name LIKE '%${documentName}%'
+		</if>
+		ORDER BY document_type_order ASC,a.update_time DESC
+	</select>
+
+	<!--获取外链文件夹中的文件-->
+	<!--任何人都能访问-->
+	<!--<select id="getSubFileLinkA" resultType="com.quarkdata.yunpan.api.model.vo.DocumentIdLinkVO">
+		SELECT
+		d.id , d.inc_id incId,d.parent_id parentId,d.id documentId,d.document_name documentName,d.document_type documentType,d.size,d.document_version_id, e.external_link_type linkType, e.external_link_code linkCode
+		from document d
+		LEFT JOIN external_link e ON e.document_id = d.parent_id
+		WHERE  d.type BETWEEN 0 and 1 AND d.is_delete = '0'
+		and e.external_link_type=0
+		<if test="parentId != null">
+			and `parent_id` = #{parentId}
+		</if>
+		<if test="linkCode != null and linkCode.trim() != ''">
+			and `external_link_code` = #{linkCode}
+		</if>
+		GROUP BY
+		d.id
+	</select>-->
+	<select id="getSubFileLinkA" resultType="com.quarkdata.yunpan.api.model.vo.DocumentIdLinkVO">
+		SELECT
+			d.*, d.id AS document_id,
+			e.external_link_type linkType,
+			e.external_link_code linkCode,
+			(
+				CASE
+				WHEN d.document_type = 'dir' THEN
+					0
+				ELSE
+					1
+				END
+			) AS type
+		FROM
+			document d
+		INNER JOIN (
+			SELECT
+				el.document_id,
+				el.external_link_type,
+				el.external_link_code
+			FROM
+				external_link el
+			WHERE
+				el.external_link_code = #{linkCode}
+		) e ON d.id_path LIKE CONCAT('%', e.document_id, '%')
+		AND d.parent_id = #{parentId}
+		AND d.is_delete = 0
+		ORDER BY
+			type
+	</select>
+
+	<!--获取外链文件夹中的文件-->
+	<!--企业（incId）内的用户都能访问-->
+	<select id="getSubFileLinkB"  resultType="com.quarkdata.yunpan.api.model.vo.DocumentIdLinkVO">
+		SELECT
+		d.id , d.inc_id incId,d.parent_id parentId,d.id documentId,d.document_name documentName,d.document_type documentType,d.size
+		from document d
+		LEFT JOIN external_link el ON el.document_id = d.parent_id
+		LEFT JOIN document_permission dp ON dp.document_id = d.parent_id
+		WHERE  d.type BETWEEN 0 and 1 AND d.is_delete = '0'
+		and el.external_link_type=1
+		and d.inc_id = #{incId}
+		<if test="parentId != null ">
+			and `parent_id` = #{parentId}
+		</if>
+		<if test="linkCode != null and linkCode.trim() != ''">
+			and `external_link_code` = #{linkCode}
+		</if>
+		GROUP BY
+		d.id
+	</select>
+
+	<!--获取外链文件夹中的文件-->
+	<!--仅具有访问权限的用户可以访问，用户userId-->
+	<select id="getSubFileLinkC" resultType="com.quarkdata.yunpan.api.model.vo.DocumentIdLinkVO">
+		SELECT
+		d.id , d.inc_id incId,d.parent_id parentId,d.id documentId,d.document_name documentName,d.document_type documentType,d.size
+		from document d
+		LEFT JOIN external_link el ON el.document_id = d.parent_id
+		LEFT JOIN document_permission dp ON dp.document_id = d.parent_id
+		WHERE  d.type BETWEEN 0 and 1 AND d.is_delete = '0'
+		and el.external_link_type=2
+		and dp.receiver_type = 0
+		and dp.receiver_id = #{userId}
+		<if test="parentId != null ">
+			and `parent_id` = #{parentId}
+		</if>
+		<if test="linkCode != null and linkCode.trim() != ''">
+			and `external_link_code` = #{linkCode}
+		</if>
+		GROUP BY
+		d.id
+	</select>
+
+	<!--获取外链文件夹中的文件-->
+	<!--仅具有访问权限的用户可以访问，用户组groupId-->
+	<select id="getSubFileLinkD" resultType="com.quarkdata.yunpan.api.model.vo.DocumentIdLinkVO">
+		SELECT
+		d.id , d.inc_id incId,d.parent_id parentId,d.id documentId,d.document_name documentName,d.document_type documentType,d.size
+		from document d
+		LEFT JOIN external_link el ON el.document_id = d.parent_id
+		LEFT JOIN document_permission dp ON dp.document_id = d.parent_id
+		WHERE  d.type BETWEEN 0 and 1 AND d.is_delete = '0'
+		and el.external_link_type=2
+		and dp.receiver_type = 1
+		and dp.receiver_id = #{groupId}
+		<if test="parentId != null ">
+			and `parent_id` = #{parentId}
+		</if>
+		<if test="linkCode != null and linkCode.trim() != ''">
+			and `external_link_code` = #{linkCode}
+		</if>
+		GROUP BY
+		d.id
+	</select>
+
+	<!--获取外链文件夹中的文件-->
+	<!--仅具有访问权限的用户可以访问，部门depId-->
+	<select id="getSubFileLinkE" resultType="com.quarkdata.yunpan.api.model.vo.DocumentIdLinkVO">
+		SELECT
+		d.id , d.inc_id incId,d.parent_id parentId,d.id documentId,d.document_name documentName,d.document_type documentType,d.size
+		from document d
+		LEFT JOIN external_link el ON el.document_id = d.parent_id
+		LEFT JOIN document_permission dp ON dp.document_id = d.parent_id
+		WHERE  d.type BETWEEN 0 and 1 AND d.is_delete = '0'
+		and el.external_link_type=2
+		and dp.receiver_type = 2
+		and dp.receiver_id = #{depId}
+		<if test="parentId != null ">
+			and `parent_id` = #{parentId}
+		</if>
+		<if test="linkCode != null and linkCode.trim() != ''">
+			and `external_link_code` = #{linkCode}
+		</if>
+		GROUP BY
+		d.id
+	</select>
+
+	<select id="getDocumentByParentId" parameterType="map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from document as a
+		<where>
+			 is_delete=0
+			<if test="parentId != null">
+				and parent_id = #{parentId}
+			</if>
+			<if test="incId != null">
+				and inc_id = #{incId}
+			</if>
+		</where>
+	</select>
+	<!--获取所有文件类型-->
+	<select id="selectAllDocumentType" resultType="java.lang.String">
+		select DISTINCT document_type FROM document
+	</select>
+
+	<select id="getDocumentIdByName" parameterType="map" resultType="java.lang.Long">
+		select id from document where document_name = #{docName,jdbcType=VARCHAR} and inc_id = #{incId,jdbcType=BIGINT} and create_user = #{user,jdbcType=VARCHAR} 
+		and is_delete = "0" and parent_id = #{parentId,jdbcType=BIGINT} and type = #{type}
+	</select>
+
+	<select id="getArchivalFileIdList" parameterType="map" resultType="java.lang.String">
+		SELECT
+		if(d.document_type='dir',CONCAT("dir_",d.id), d.document_version_id) as id
+		FROM
+		document d
+		WHERE
+		d.inc_id = #{incId}
+		AND d.is_delete = '0'
+		AND d.type='2'
+		AND d.id in (SELECT DISTINCT do.id from document do,document_permission dp where do.id=dp.document_id AND ((
+		dp.receiver_id = #{userId,jdbcType=BIGINT}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>))
+	</select>
+
+	<select id="getSamePatternDocuments" resultMap="BaseResultMap">
+		SELECT * FROM document WHERE parent_id = #{parentId} AND document_name REGEXP #{namePattern} AND is_delete='0'
+	</select>
+
+	<!--根据父id获取子文件夹-->
+	<select id="getPersonalDirectoryByParentId" parameterType="map" resultMap="documentZtreeVOMap">
+		SELECT
+		*
+		FROM
+		document a
+		WHERE
+		a.inc_id = #{incId,jdbcType=BIGINT}
+		AND a.create_user = #{userId,jdbcType=BIGINT}
+		AND a.type = '1'
+		AND a.document_type = 'dir'
+		AND a.parent_id = #{parentId,jdbcType=BIGINT}
+		AND a.is_delete = '0'
+		ORDER BY a.update_time DESC
+	</select>
+
+	<!--根据父id获取具有读写权限的组织文件子文件夹-->
+	<select id="getGreaterThanWritePrivilegeIncDirectoryByParentId" parameterType="map" resultMap="documentZtreeVOMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM document a
+		WHERE  a.type = '0'
+		AND a.inc_id = #{incId,jdbcType=BIGINT}
+		AND a.is_delete = '0' AND a.document_type = 'dir'
+		<choose>
+			<when test="documentName != null and documentName.trim()!='' and isExact != 1">
+				AND a.document_name LIKE '%${documentName}%'
+				<if test="parentPath!=null and parentPath.trim()!=''">
+					AND a.id_path LIKE '${parentPath}%'/*递归查询文件名*/
+				</if>
+			</when>
+			<otherwise>
+				AND a.parent_id = #{parentId,jdbcType=BIGINT}
+				<if test="isExact == 1">
+					AND  a.document_name = #{documentName}
+				</if>
+			</otherwise>
+		</choose>
+		ORDER BY a.update_time DESC
+	</select>
+
+	<!--查询最近浏览历史文件-->
+<!--	<select id="getRecentBrowseDocuments" parameterType="map" resultType="com.quarkdata.yunpan.api.model.vo.DocumentRecentBrowseVO">
+		SELECT
+			d.*, a.last_access_time, a.log_id
+		FROM
+			(SELECT m.document_id, m.last_access_time, m.log_id FROM (
+				SELECT n.*, (SELECT ll.is_delete from log ll where ll.id = n.log_id) as is_delete FROM (
+				SELECT
+					r.document_id, MAX(l.id) AS log_id,
+					MAX(l.create_time) AS last_access_time
+				FROM
+					log l,
+					log_document_rel r
+				WHERE
+					l.inc_id = #{incId}
+				AND l.create_user_id = #{userId}
+				AND l.id = r.log_id
+				AND l.action_type IN
+				<foreach collection="actionType" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				<choose>
+					<when test="timeUnit == 'DAY'">
+						AND DATE_SUB(CURDATE(), INTERVAL #{time} DAY) &lt;= l.create_time
+					</when>
+					<when test="timeUnit == 'WEEK'">
+						AND DATE_SUB(CURDATE(), INTERVAL #{time} WEEK) &lt;= l.create_time
+					</when>
+					<when test="timeUnit == 'MONTH'">
+						AND DATE_SUB(CURDATE(), INTERVAL #{time} MONTH) &lt;= l.create_time
+					</when>
+					<otherwise>
+					</otherwise>
+				</choose>
+				GROUP BY
+					document_id) n) m WHERE m.is_delete != 1
+			) a,
+			document d
+		WHERE
+			a.document_id = d.id
+		AND d.document_type != 'dir'
+		AND d.is_delete = '0'
+		AND (
+			(d.type = 1 AND d.create_user = #{userId})
+			OR d.type = 0
+			OR d.type = 2
+			OR d.type = 3
+			OR (
+				a.document_id IN (
+					SELECT
+						b.document_id
+					FROM
+						(
+							SELECT
+								*
+							FROM
+								document_share ds
+							WHERE
+							(
+								(
+									ds.receiver_type = 0
+									AND ds.receiver_id = #{userId}
+								)
+								<if test="groupIds != null">
+									OR (ds.receiver_type = 1 AND ds.receiver_id IN
+									<foreach item="item" index="index" collection="groupIds"
+											 open="(" separator="," close=")">
+										#{item}
+									</foreach>)
+								</if>
+								<if test="departmentId != null">
+									OR (
+									ds.receiver_type = 2
+									AND ds.receiver_id = #{departmentId}
+									)
+								</if>
+							)
+							AND (ds.is_delete = 0 OR ds.is_delete IS NULL)
+							AND ds.inc_id = #{incId}
+						) b
+					WHERE
+						b.document_id NOT IN (
+							SELECT
+								document_id
+							FROM
+								document_share
+							WHERE
+								inc_id = #{incId}
+							AND receiver_type = 0
+							AND receiver_id = #{userId}
+							AND is_delete = 1
+						)
+				)
+			)
+		)
+		ORDER BY last_access_time DESC
+	</select>-->
+	<select id="getRecentBrowseDocuments" parameterType="map" resultType="com.quarkdata.yunpan.api.model.vo.DocumentRecentBrowseVO">
+		SELECT
+			d.*, a.last_access_time, a.log_id
+		FROM
+			(SELECT m.document_id, m.last_access_time, m.log_id FROM (
+				SELECT n.*, (SELECT ll.is_delete from log ll where ll.id = n.log_id) as is_delete FROM (
+				SELECT
+					r.document_id, MAX(l.id) AS log_id,
+					MAX(l.create_time) AS last_access_time
+				FROM
+					log l,
+					log_document_rel r
+				WHERE
+					l.inc_id = #{incId}
+				AND l.create_user_id = #{userId}
+				AND l.id = r.log_id
+				AND l.action_type IN
+				<foreach collection="actionType" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				<choose>
+					<when test="timeUnit == 'DAY'">
+						AND DATE_SUB(CURDATE(), INTERVAL #{time} DAY) &lt;= l.create_time
+					</when>
+					<when test="timeUnit == 'WEEK'">
+						AND DATE_SUB(CURDATE(), INTERVAL #{time} WEEK) &lt;= l.create_time
+					</when>
+					<when test="timeUnit == 'MONTH'">
+						AND DATE_SUB(CURDATE(), INTERVAL #{time} MONTH) &lt;= l.create_time
+					</when>
+					<otherwise>
+					</otherwise>
+				</choose>
+				GROUP BY
+					document_id) n) m WHERE m.is_delete != 1
+			) a,
+			document d
+		WHERE
+			a.document_id = d.id
+		AND d.document_type != 'dir'
+		AND d.is_delete = '0'
+		AND (
+			(d.type = 1 AND d.create_user = #{userId})
+			OR d.type = 0
+			OR d.type = 2
+			OR d.type = 3
+			OR EXISTS (
+					SELECT * FROM (
+						SELECT
+							d.id
+						FROM
+							document d
+						INNER JOIN (
+							SELECT
+								ds.document_id
+							FROM
+								document_share ds
+							WHERE
+								ds.inc_id = #{incId}
+							AND (
+									(
+									ds.receiver_type = 0
+									AND ds.receiver_id = #{userId}
+									)
+									<if test="groupIds != null">
+										OR (ds.receiver_type = 1 AND ds.receiver_id IN
+										<foreach item="item" index="index" collection="groupIds"
+												 open="(" separator="," close=")">
+											#{item}
+										</foreach>)
+									</if>
+									<if test="departmentId != null">
+										OR (
+										ds.receiver_type = 2
+										AND ds.receiver_id = #{departmentId}
+										)
+									</if>
+							)
+							AND NOT EXISTS (
+								SELECT
+									*
+								FROM
+									document_share s
+								WHERE
+									s.inc_id = #{incId}
+								AND s.receiver_type = 0
+								AND s.receiver_id = #{userId}
+								AND s.document_id = ds.document_id
+								AND s.is_delete = 1
+							)
+						) a ON d.id_path LIKE CONCAT('%/', a.document_id, '/%')
+						AND d.is_delete = 0
+					) g where g.id = a.document_id
+				)
+		)
+		ORDER BY last_access_time DESC
+	</select>
+
+	<select id="isShared" parameterType="map" resultType="int">
+		select count(*) from document_share where document_id = #{documentId,jdbcType=BIGINT} and receiver_id = #{receiverId,jdbcType=BIGINT}
+	</select>
+
+	<select id="getPersonalFileIdList" parameterType="map" resultType="java.lang.String">
+		SELECT if(document.document_type='dir',CONCAT("dir_",document.id), max(document_version.id)) as id
+		FROM document_version, document
+		WHERE document.is_delete=0 and document.type=1 and ((document.id = document_version.document_id and document_version.is_delete=0) or document.document_type ="dir")
+		and document.create_user=#{userId} AND document.inc_id=#{incId}
+		group by document.id
+	</select>
+	<select id="getShareSpaceFileIdList" parameterType="map" resultType="java.lang.String">
+		SELECT DISTINCT
+		if(a.document_type = 'dir', CONCAT("dir_",a.id), c.id)
+		FROM(
+		SELECT
+		d.*
+		FROM
+		document d
+		WHERE d.type = #{type}
+		AND d.inc_id =#{incId}
+		AND d.is_delete = '0'
+		) a
+		INNER JOIN (
+		SELECT DISTINCT
+		dp.document_id,d.id_path
+		FROM document_permission dp
+		INNER JOIN document d ON dp.document_id = d.id
+		WHERE(
+		dp.receiver_id = #{userId}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+		OR (
+		dp.receiver_id = #{deptId,jdbcType=BIGINT}
+		AND dp.receiver_type = '2'
+		)
+		</if>
+		) b
+		INNER JOIN document_version c
+		ON a.id_path LIKE CONCAT(b.id_path,'%') and (a.document_type = 'dir' or (c.document_id = a.id and c.is_delete = 0))
+		<if test="parentId != null">
+			and a.id_path LIKE CONCAT("%/", #{parentId},'/%')
+		</if>
+		order by a.id;
+	</select>
+
+	<select id="getVersionById" parameterType="map" resultType="java.lang.String">
+		select if(MAX(dv.version) = v.version, "", v.version)
+		 from document_version as dv, (select document_id, version from document_version where id = #{versionId}) as v
+		 where dv.document_id = v.document_id and dv.is_delete = 0
+	</select>
+
+
+	<select id="getDocumentById" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		tag.id tag_id,
+		tag.tag_name
+		FROM
+		(
+		SELECT
+		d.*
+		FROM
+		document d
+		WHERE
+		d.id =#{documentId}
+		) a
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+	</select>
+
+	<select id="getSharedFilesCount" parameterType="map" resultType="java.lang.Long">
+		SELECT DISTINCT
+		count(*)
+		FROM(
+		SELECT
+		d.*
+		FROM
+		document d
+		WHERE d.type = '1'
+		AND d.inc_id =#{incId}
+		AND d.is_delete = '0'
+		) a
+		INNER JOIN (
+		SELECT DISTINCT
+		dp.document_id,d.id_path
+		FROM document_share dp
+		INNER JOIN document d ON dp.document_id = d.id
+		WHERE(
+		dp.receiver_id = #{userId}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>
+		) b
+		ON a.id_path LIKE CONCAT(b.id_path,'%')
+		order by a.id;
+	</select>
+
+	<select id="getOrganizedFileCount" parameterType="map" resultType="java.lang.Long">
+		SELECT DISTINCT
+		count(*)
+		FROM(
+		SELECT
+		d.*
+		FROM
+		document d
+		WHERE d.type = '0'
+		AND d.inc_id =#{incId}
+		AND d.is_delete = '0'
+		) a
+		INNER JOIN (
+		SELECT DISTINCT
+		dp.document_id,d.id_path
+		FROM document_permission dp
+		INNER JOIN document d ON dp.document_id = d.id
+		WHERE(
+		dp.receiver_id = #{userId}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>
+		) b
+		ON a.id_path LIKE CONCAT(b.id_path,'%')
+		order by a.id;
+	</select>
+
+	<select id="getPersonalFileChildren" parameterType="map" resultType="com.quarkdata.yunpan.api.model.dataobj.Document">
+		SELECT DISTINCT
+		<include refid="Base_Column_List" />
+		FROM document as a
+		WHERE a.is_delete=0 and a.type=1
+		and a.create_user=#{userId} AND a.inc_id=#{incId}
+		<if test="parentId != null">
+			and a.id_path LIKE CONCAT("%/", #{parentId},'/%')
+		</if>
+	</select>
+
+	<select id="getOrganizedFileChildren" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+		<include refid="Base_Column_List" />
+		,
+		tag.id tag_id,
+		tag.tag_name ,
+		IF ((cdr.id IS NULL), FALSE, TRUE) is_col,
+		CASE
+		WHEN a.document_type = 'dir' THEN
+		0
+		ELSE
+		1
+		END AS document_type_order
+		FROM (select * from document
+		<if test="parentId != null">
+			where id_path LIKE CONCAT("%/",#{parentId},'/%')
+		</if>
+		) a
+		LEFT JOIN collect_document_rel cdr ON a.id = cdr.document_id
+		AND cdr.user_id = #{userId,jdbcType=BIGINT}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+		WHERE  a.type = '0'
+		AND a.inc_id = #{incId,jdbcType=BIGINT}
+		AND a.is_delete = '0'
+
+	</select>
+
+	<select id="getShareFileChildren" parameterType="map" resultType="com.quarkdata.yunpan.api.model.dataobj.Document">
+		SELECT DISTINCT
+		<include refid="Base_Column_List" />
+		FROM(
+		SELECT
+		d.*
+		FROM
+		document d
+		WHERE d.type = '1'
+		AND d.inc_id =#{incId}
+		AND d.is_delete = '0'
+		) a
+		INNER JOIN (
+		SELECT DISTINCT
+		dp.document_id,d.id_path
+		FROM document_share dp
+		INNER JOIN document d ON dp.document_id = d.id
+		WHERE(
+		dp.receiver_id = #{userId}
+		AND dp.receiver_type = '0'
+		)
+		<if test="userGroupIds != null and userGroupIds.size() > 0">
+			OR (
+			dp.receiver_id in
+			<foreach collection="userGroupIds" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			AND dp.receiver_type = '1'
+			)
+		</if>
+		<if test="deptId != null">
+			OR (
+			dp.receiver_id = #{deptId,jdbcType=BIGINT}
+			AND dp.receiver_type = '2'
+			)
+		</if>
+		) b
+		ON a.id_path LIKE CONCAT(b.id_path,'%')
+		<if test="parentId != null">
+			and a.id_path LIKE CONCAT("%/", #{parentId},'/%')
+		</if>
+		order by a.id;
+	</select>
+
+	<select id="getVersionIdsForFullText" parameterType="map" resultType="java.lang.String">
+		SELECT DISTINCT
+		if(a.document_type = 'dir', CONCAT("dir_",a.id), c.id)
+		FROM(
+		SELECT
+		d.*
+		FROM
+		document d
+		WHERE d.type = 0 and id in (${documentIds})
+		AND d.inc_id =#{incId}
+		AND d.is_delete = '0'
+		) a		INNER JOIN document_version c
+		ON (a.document_type = 'dir' or (c.document_id = a.id and c.is_delete = 0))
+		order by field(${documentIds});
+	</select>
+
+	<select id="getDocumentsByIds" parameterType="map" resultType="com.quarkdata.yunpan.api.model.vo.DocumentExtend">
+		select
+		<include refid="Base_Column_List" />
+		FROM  document as a
+		where id in (${documentIds}) in order by field(a.id,${documentIds});
+	</select>
+
+	<select id="checkFileIsDeleteByDocumentVersionId" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT
+			d.is_delete
+		FROM
+			document_version v,
+			document d
+		WHERE
+			v.document_id = d.id
+		AND v.id = #{docVersionId}
+	</select>
+
+	<select id="getAllChildrenByParentIdAndDocumentName" parameterType="map" resultType="com.quarkdata.yunpan.api.model.dataobj.Document">
+		SELECT
+			*
+		FROM
+			document d
+		WHERE
+			d.inc_id = #{incId}
+		AND d.is_delete = 0
+		AND d.id_path LIKE CONCAT(#{parentIdPath}, '%')
+		<if test="documentName != null">
+			AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+		</if>
+	</select>
+	
+	<select id="getLastUpdateTime" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+			MAX(
+				CASE
+				WHEN d.type = 0 THEN
+					UNIX_TIMESTAMP(d.update_time) * 1000
+				END
+			) AS '0',
+			MAX(
+				CASE
+				WHEN d.type = 1 THEN
+					UNIX_TIMESTAMP(d.update_time) * 1000
+				END
+			) AS '1',
+			MAX(
+				CASE
+				WHEN d.type = 2 THEN
+					UNIX_TIMESTAMP(d.update_time) * 1000
+				END
+			) AS '2'
+		FROM
+			document d
+		WHERE
+			d.inc_id = #{incId}
+		AND d.update_user = #{userId}
+	</select>
+
+	<update id="unLockOrgDocument" parameterType="java.util.Map">
+		UPDATE document SET is_lock = 0, lock_time = NULL, lock_user = NULL, lock_username = NULL WHERE inc_id = #{incId} AND is_delete = 0 AND type = 0
+		<choose>
+			<when test="id == null and idPath != null">
+				AND id_path LIKE CONCAT(#{idPath}, '%')
+			</when>
+			<otherwise>
+				<if test="id != null and idPath == null">
+					AND id = #{id}
+				</if>
+			</otherwise>
+		</choose>
+	</update>
+
+	<!--定时自动解锁文档-->
+	<update id="timingUnlock" parameterType="java.lang.Integer">
+		UPDATE document SET is_lock = 0, lock_time = NULL, lock_user = NULL, lock_username = NULL
+		WHERE type = 0 AND is_lock = 1 AND DATE_SUB(CURDATE(), INTERVAL #{unlockDay} DAY) &lt;= lock_time
+	</update>
+
+
+									<!--❀❀❀❀❀❀❀❀❀❀❀ 更新权限后的sql ❀❀❀❀❀❀❀❀❀❀-->
+	<select id="getOrgFileListOfSystemAdmin" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+			<include refid="Base_Column_List" />,
+			tag.id AS tag_id,
+			tag.tag_name ,
+			#{systemAdminPermission} AS permission,
+			IF ((cdr.id IS NULL), FALSE, TRUE) is_col
+		FROM (
+			SELECT
+				*,
+				(CASE
+				 WHEN document_type = 'dir' THEN
+					0
+				 ELSE
+					1
+				END) AS document_type_order
+			FROM
+				document d
+			WHERE
+				d.inc_id = #{incId}
+			AND d.is_delete = 0
+			AND d.type = 0
+			<if test="documentType != null and documentType != ''">
+				AND d.document_type = #{documentType}
+			</if>
+			<choose>
+				<when test="documentName != null and documentName != ''">
+					AND d.id_path LIKE CONCAT(#{idPath}, '%')
+				</when>
+				<otherwise>
+					AND d.parent_id = #{parentId}
+				</otherwise>
+			</choose>
+			<if test="documentName != null and documentName != ''">
+				AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+			</if>
+			ORDER BY
+				document_type_order ASC, update_time DESC
+			<choose>
+				<when test="pageNum != null and pageSize != null">
+					LIMIT (#{pageNum} - 1) * #{pageSize}, #{pageSize}
+				</when>
+				<otherwise>
+					LIMIT 9999
+				</otherwise>
+			</choose>
+		) a
+		LEFT JOIN collect_document_rel cdr ON a.id = cdr.document_id AND cdr.user_id = #{userId}
+		LEFT JOIN tag_document_rel tdr ON a.id = tdr.document_id AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+	</select>
+<!--
+	<select id="getOrgFileList" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+			a.*, tag.id AS tag_id,
+			tag.tag_name,
+			(
+				CASE
+				WHEN cdr.id IS NULL THEN
+					FALSE
+				ELSE
+					TRUE
+				END
+			) AS is_col
+		FROM
+			(
+				SELECT
+					*, (
+						CASE
+						WHEN document_type = 'dir' THEN
+							0
+						ELSE
+							1
+						END
+					) AS document_type_order
+				FROM
+					(
+						SELECT
+							*
+						FROM
+							(
+								SELECT
+									dp.document_id,
+									dp.permission,
+									dp.receiver_type
+								FROM
+									document_permission dp
+								WHERE
+									dp.inc_id = #{incId}
+								AND (
+									(
+										dp.receiver_type = '0'
+										AND dp.receiver_id = #{userId}
+									)
+									<if test="groupIds != null and groupIds.size() > 0">
+										OR (dp.receiver_type = '1' AND dp.receiver_id IN
+										<foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+											#{item}
+										</foreach>)
+									</if>
+									<if test="deptId != null">
+										OR (dp.receiver_type = '2' AND dp.receiver_id = #{deptId})
+									</if>
+								)
+								<if test="permissionIndex != null and permissionIndex != ''">
+									AND SUBSTR(dp.permission, #{permissionIndex}, 1) = 1
+								</if>
+								ORDER BY
+									dp.document_id,
+									dp.receiver_type
+							) x
+						GROUP BY
+							x.document_id
+					) b
+				INNER JOIN document d ON b.document_id = d.id
+				AND d.is_delete = 0 AND d.type = 0
+				<if test="documentType != null and documentType != ''">
+					AND d.document_type = #{documentType}
+				</if>
+				<choose>
+					<when test="documentName != null and documentName != ''">
+						AND d.id_path LIKE CONCAT(#{idPath}, '%')
+					</when>
+					<otherwise>
+						AND d.parent_id = #{parentId}
+					</otherwise>
+				</choose>
+				<if test="documentName != null and documentName != ''">
+					AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+				</if>
+				ORDER BY
+					document_type_order ASC,
+					d.update_time DESC
+				<choose>
+					<when test="pageNum != null and pageSize != null">
+						LIMIT (#{pageNum} - 1) * #{pageSize}, #{pageSize}
+					</when>
+					<otherwise>
+						LIMIT 9999
+					</otherwise>
+				</choose>
+			) a
+		LEFT JOIN collect_document_rel cdr ON a.document_id = cdr.document_id
+		AND cdr.user_id = #{userId}
+		LEFT JOIN tag_document_rel tdr ON a.document_id = tdr.document_id
+		AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+	</select>
+-->
+	<select id="getOrgFileList" parameterType="map" resultMap="BaseResultMapCarryCol_tags">
+		SELECT
+			a.*, tag.id AS tag_id,
+			tag.tag_name,
+			(
+				CASE
+				WHEN cdr.id IS NULL THEN
+					FALSE
+				ELSE
+					TRUE
+				END
+			) AS is_col
+		FROM(
+			SELECT
+				m.*,  (
+						CASE
+						WHEN document_type = 'dir' THEN
+						0
+						ELSE
+						1
+						END
+					  ) AS document_type_order
+			FROM
+				(
+					SELECT
+						*
+					FROM
+						(
+							SELECT
+								*
+							FROM
+								(
+									SELECT
+										dp.document_id,
+										dp.permission,
+										dp.receiver_type
+									FROM
+										document_permission dp
+									WHERE
+										dp.inc_id = #{incId}
+									AND (
+										(
+											dp.receiver_type = '0'
+											AND dp.receiver_id = #{userId}
+										)
+										<if test="groupIds != null and groupIds.size() > 0">
+											OR (dp.receiver_type = '1' AND dp.receiver_id IN
+											<foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+												#{item}
+											</foreach>)
+										</if>
+										<if test="deptId != null">
+											OR (dp.receiver_type = '2' AND dp.receiver_id = #{deptId})
+										</if>
+									)
+									<if test="permissionIndex != null and permissionIndex != ''">
+										AND SUBSTR(dp.permission, #{permissionIndex}, 1) = 1
+									</if>
+									ORDER BY
+										dp.document_id,
+										dp.receiver_type
+								) x
+							GROUP BY
+								x.document_id
+						) b
+					INNER JOIN document d ON b.document_id = d.id
+					AND d.is_delete = 0 AND d.type = 0
+					<if test="documentType != null and documentType != ''">
+						AND d.document_type = #{documentType}
+					</if>
+					<choose>
+						<when test="documentName != null and documentName != ''">
+							AND d.id_path LIKE CONCAT(#{idPath}, '%')
+						</when>
+						<otherwise>
+							AND d.parent_id = #{parentId}
+						</otherwise>
+					</choose>
+					<if test="documentName != null and documentName != ''">
+						AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+					</if>
+				) m
+			WHERE
+				NOT EXISTS (
+                    SELECT
+                        *
+                    FROM
+                        (
+                            SELECT
+                                k.id_path, count(*) AS count_son
+                            FROM
+                                (
+                                    SELECT
+                                        d.id,
+                                        d.id_path,
+                                        b.permission
+                                    FROM
+                                        (
+                                            SELECT
+                                                x.*
+                                            FROM
+                                                (
+                                                    SELECT
+                                                        dp.document_id,
+                                                        dp.permission,
+                                                        dp.receiver_type
+                                                    FROM
+                                                        document_permission dp
+                                                    WHERE
+                                                        dp.inc_id = 2
+                                                    AND (
+                                                        (
+                                                            dp.receiver_type = '0'
+                                                            AND dp.receiver_id = #{userId}
+                                                        )
+                                                        <if test="groupIds != null and groupIds.size() > 0">
+                                                            OR (dp.receiver_type = '1' AND dp.receiver_id IN
+                                                            <foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+                                                                #{item}
+                                                            </foreach>)
+                                                        </if>
+                                                        <if test="deptId != null">
+                                                            OR (dp.receiver_type = '2' AND dp.receiver_id = #{deptId})
+                                                        </if>
+                                                    )
+                                                    ORDER BY
+                                                        dp.document_id,
+                                                        dp.receiver_type
+                                                ) x
+                                            GROUP BY
+                                                x.document_id
+                                        ) b
+                                    INNER JOIN document d ON b.document_id = d.id
+                                    AND d.is_delete = 0 AND d.type = 0
+                                    <if test="documentType != null and documentType != ''">
+                                        AND d.document_type = #{documentType}
+                                    </if>
+                                    <choose>
+                                        <when test="documentName != null and documentName != ''">
+                                            AND d.id_path LIKE CONCAT(#{idPath}, '%')
+                                        </when>
+                                        <otherwise>
+                                            AND d.parent_id = #{parentId}
+                                        </otherwise>
+                                    </choose>
+                                    <if test="documentName != null and documentName != ''">
+                                        AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+                                    </if>
+                                ) m2,
+                                document k,
+                                document_permission l
+                            WHERE
+                                m2.permission = #{associatedVisiblePermission}
+                            AND k.id_path LIKE concat(m2.id_path, "%")
+                            AND k.id != m2.id
+                            AND l.document_id = k.id
+                            AND (
+                                (
+                                    l.receiver_type = '0'
+                                    AND l.receiver_id = #{userId}
+                                )
+                                <if test="groupIds != null and groupIds.size() > 0">
+                                    OR (l.receiver_type = '1' AND l.receiver_id IN
+                                    <foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+                                        #{item}
+                                    </foreach>)
+                                </if>
+                                <if test="deptId != null">
+                                    OR (l.receiver_type = '2' AND l.receiver_id = #{deptId})
+                                </if>
+                            )
+                            AND l.permission != #{associatedVisiblePermission}
+                        ) c
+                    WHERE m.permission = #{associatedVisiblePermission} AND(c.count_son = 0 OR
+                    NOT (
+                    c.id_path LIKE concat('%', m.id_path, '%')
+                    ))
+				)
+			ORDER BY
+			document_type_order ASC,
+			update_time DESC
+			<choose>
+				<when test="pageNum != null and pageSize != null">
+					LIMIT (#{pageNum} - 1) * #{pageSize}, #{pageSize}
+				</when>
+				<otherwise>
+					LIMIT 9999
+				</otherwise>
+			</choose>
+			) a
+		LEFT JOIN collect_document_rel cdr ON a.document_id = cdr.document_id
+		AND cdr.user_id = #{userId}
+		LEFT JOIN tag_document_rel tdr ON a.document_id = tdr.document_id
+		AND tdr.create_user = #{userId}
+		LEFT JOIN tag ON tdr.tag_id = tag.id
+	</select>
+</mapper>

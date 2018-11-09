@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.DocumentShareMapper2">
+    <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.vo.DocumentShareExtend">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="inc_id" jdbcType="BIGINT" property="incId"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="document_version_id" jdbcType="BIGINT" property="documentVersionId"/>
+        <result column="document_name" jdbcType="VARCHAR" property="documentName"/>
+        <result column="type" jdbcType="CHAR" property="type"/>
+        <result column="document_type" jdbcType="VARCHAR" property="documentType"/>
+        <result column="id_path" jdbcType="VARCHAR" property="idPath"/>
+        <result column="size" jdbcType="BIGINT" property="size"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="BIGINT" property="createUser"/>
+        <result column="create_username" jdbcType="VARCHAR" property="createUsername"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="BIGINT" property="updateUser"/>
+        <result column="update_username" jdbcType="VARCHAR" property="updateUsername"/>
+        <result column="is_delete" jdbcType="CHAR" property="isDelete"/>
+        <result column="is_share" jdbcType="CHAR" property="isShare"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+
+        <result column="create_username" jdbcType="VARCHAR" property="createUsername"/>
+        <result column="document_id" jdbcType="BIGINT" property="documentId"/>
+        <result column="share_id" jdbcType="BIGINT" property="shareId"/>
+        <result column="permission" jdbcType="VARCHAR" property="permission"/>
+        <result column="direct_share" jdbcType="CHAR" property="directShare"/>
+        <result column="is_col" property="isCol"/>
+        <!--<collection property="tags"-->
+        <!--ofType="com.quarkdata.yunpan.api.model.dataobj.Tag" notNullColumn="tag_id">-->
+        <!--<id property="id" jdbcType="BIGINT" column="tag_id"/>-->
+        <!--<result property="tagName" column="tag_name" jdbcType="VARCHAR"/>-->
+        <!--</collection>-->
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    ds.id,d.id document_id,ds.create_username,d.document_name,d.document_type,d.size,d.update_time,dp.permission,d.create_user,d.document_version_id
+  </sql>
+
+    <!--<select id="selectShareList" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+            a.id,
+            d.id document_id,
+            a.create_username,
+            d.document_name,
+            d.document_type,
+            '1' AS direct_share,
+            (
+                CASE
+                WHEN d.document_type = 'dir' THEN
+                  0
+                ELSE
+                  d.size
+                END
+            ) AS 'size',
+            d.update_time,
+            dp.permission,
+            d.create_user,
+            d.document_version_id,
+            (
+                CASE
+                WHEN cdr.id IS NOT NULL THEN
+                    TRUE
+                ELSE
+                    FALSE
+                END
+            ) AS is_col
+        FROM
+            (
+                SELECT
+                    *
+                FROM
+                    (
+                        SELECT
+                            *
+                        FROM
+                            document_share ds
+                        WHERE
+                            (
+                                (
+                                    ds.receiver_type = 0
+                                    AND ds.receiver_id = #{userId}
+                                )
+                                <if test="groupIds != null">
+                                    OR (ds.receiver_type = 1 AND ds.receiver_id IN
+                                    <foreach item="item" index="index" collection="groupIds"
+                                             open="(" separator="," close=")">
+                                        #{item}
+                                    </foreach>)
+                                </if>
+                                <if test="departmentId != null">
+                                    OR (ds.receiver_type = 2 AND ds.receiver_id = #{departmentId})
+                                </if>
+                            )
+                        AND (ds.is_delete = 0 OR ds.is_delete IS NULL)
+                        AND ds.inc_id = #{incId}
+                    ) b
+                WHERE
+                    b.document_id NOT IN (
+                        SELECT
+                            document_id
+                        FROM
+                            document_share
+                        WHERE
+                            inc_id = #{incId}
+                        AND receiver_type = 0
+                        AND receiver_id = #{userId}
+                        AND is_delete = 1
+                    )
+            ) a
+        INNER JOIN document d ON a.document_id = d.id
+        AND d.is_delete = 0
+        <if test="documentName != null and documentName != ''">
+            AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+        </if>
+        INNER JOIN document_permission dp ON a.id = dp.share_id
+        LEFT JOIN collect_document_rel cdr ON cdr.user_id = #{userId}
+        AND d.id = cdr.document_id
+        ORDER BY
+            a.create_time DESC
+    </select>-->
+
+    <!--<select id="selectShareList" parameterType="map" resultMap="BaseResultMap">
+        SELECT DISTINCT
+        <include refid="Base_Column_List"/>,
+        IF((b.id IS NULL), FALSE, TRUE) is_col
+        &#45;&#45; ,tag.id tag_id,tag.tag_name
+        FROM ((((select *
+        from document_share a
+        where (a.receiver_type=0 and a.receiver_id = #{userId})
+        <if test="groupIds != null">
+            or (a.receiver_type=1 and a.receiver_id in
+            <foreach item="item" index="index" collection="groupIds"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>)
+        </if>
+        or (a.receiver_type=2 and a.receiver_id = #{departmentId})
+        ) ds
+        join document d on ds.document_id = d.id
+        AND d.inc_id = #{incId}
+        AND d.is_delete = '0'
+        <if test="documentName != null">
+            AND d.document_name LIKE '%${documentName}%'
+        </if>))
+        join document_permission dp on d.id = dp.document_id and dp.share_id = ds.id)
+        LEFT JOIN (
+        SELECT
+        cdr.*
+        FROM
+        collect_document_rel cdr
+        ) b ON ds.document_id = b.document_id
+        AND #{userId}= b.user_id AND b.inc_id = #{incId}
+        &#45;&#45; LEFT JOIN
+        &#45;&#45; tag_document_rel tdr ON ds.document_id = tdr.document_id
+        &#45;&#45; LEFT JOIN tag ON tag.id
+        &#45;&#45; = tdr.tag_id AND tag.is_delete = '0'
+        order by ds.create_time desc
+    </select>-->
+
+    <!--取消共享给用户组或部门共享时在共享表里面添加一条个人取消记录-->
+<!--    <select id="selectShareList" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+            ds.id AS share_id,
+            (
+                CASE
+                WHEN ds.id IS NOT NULL THEN
+                    1
+                ELSE
+                    0
+                END
+            ) AS direct_share,
+            ds.create_username,
+            ds.create_time AS share_time,
+            d.id,
+            d.id AS document_id,
+            d.id_path,
+            d.document_type,
+            d.document_name,
+            d.is_delete,
+            d.parent_id,
+            d.update_time,
+            (
+                CASE
+                WHEN d.document_type = 'dir' THEN
+                    0
+                ELSE
+                    d.size
+                END
+            ) AS 'size',
+            (
+                CASE
+                WHEN d.document_type = 'dir' THEN
+                    0
+                ELSE
+                    1
+                END
+            ) AS 'is_dir',
+            d.create_user,
+            d.document_version_id,
+            (
+                CASE
+                WHEN cdr.id IS NOT NULL THEN
+                    TRUE
+                ELSE
+                    FALSE
+                END
+            ) AS is_col
+        FROM
+            document_share ds
+        RIGHT JOIN (
+            SELECT
+                d.id AS document_id
+            FROM
+                (
+                    SELECT
+                        *
+                    FROM
+                        (
+                            SELECT
+                                *
+                            FROM
+                                document_share ds
+                            WHERE
+                                (
+                                    (
+                                      ds.receiver_type = 0
+                                      AND ds.receiver_id = #{userId}
+                                    )
+                                    <if test="groupIds != null">
+                                        OR (ds.receiver_type = 1 AND ds.receiver_id IN
+                                        <foreach item="item" index="index" collection="groupIds"
+                                                 open="(" separator="," close=")">
+                                            #{item}
+                                        </foreach>)
+                                    </if>
+                                    <if test="departmentId != null">
+                                        OR (ds.receiver_type = 2 AND ds.receiver_id = #{departmentId})
+                                    </if>
+                                )
+                            AND (
+                                ds.is_delete = 0
+                                OR ds.is_delete IS NULL
+                            )
+                            AND ds.inc_id = #{incId}
+                        ) b
+                    WHERE NOT EXISTS(
+                        SELECT
+                          document_id
+                        FROM
+                          document_share
+                        WHERE
+                          inc_id = #{incId}
+                        AND receiver_type = 0
+                        AND receiver_id = #{userId}
+                        AND is_delete = 1
+                        AND document_id = b.document_id
+                    )
+                ) a
+            INNER JOIN document d ON d.id_path LIKE CONCAT('%', a.document_id, '%')
+            AND d.is_delete = 0
+        ) a ON ds.document_id = a.document_id
+        AND (
+                (
+                  ds.receiver_type = 0
+                  AND ds.receiver_id = #{userId}
+                )
+                <if test="groupIds != null">
+                    OR (ds.receiver_type = 1 AND ds.receiver_id IN
+                    <foreach item="item" index="index" collection="groupIds"
+                             open="(" separator="," close=")">
+                        #{item}
+                    </foreach>)
+                </if>
+                <if test="departmentId != null">
+                    OR (ds.receiver_type = 2 AND ds.receiver_id = #{departmentId})
+                </if>
+        )
+        AND ds.inc_id = #{incId}
+        INNER JOIN document d ON a.document_id = d.id
+        <choose>
+            <when test="parentId == null and documentName == null">
+                AND ds.id IS NOT NULL
+            </when>
+            <when test="parentId != null and documentName == null">
+                AND d.parent_id = #{parentId}
+            </when>
+            <otherwise>
+                <if test="parentId != null and documentName != null">
+                    AND d.id_path LIKE CONCAT('%', #{parentId}, '%')
+                </if>
+            </otherwise>
+        </choose>
+        <if test="documentName != null and documentName != ''">
+            AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+        </if>
+        LEFT JOIN collect_document_rel cdr ON cdr.user_id = #{userId}
+        AND d.id = cdr.document_id
+        ORDER BY
+            is_dir ASC,
+            ds.create_time DESC
+        <if test="startNum != null and pageSize != null">
+            LIMIT #{startNum}, #{pageSize}
+        </if>
+    </select>-->
+    <select id="selectShareList" parameterType="map" resultMap="BaseResultMap">
+        SELECT y.*,
+        (
+        CASE
+        WHEN y.document_type = 'dir' THEN
+        0
+        ELSE
+        1
+        END
+        ) AS 'document_type_order',
+            (
+            CASE
+            WHEN cdr.id IS NOT NULL THEN
+              TRUE
+            ELSE
+              FALSE
+            END
+            ) AS is_col
+        FROM (
+            SELECT
+                *
+            FROM
+                (
+                    SELECT
+                        d.id,
+                        d.id AS document_id,
+                        d.id_path,
+                        d.document_type,
+                        d.document_name,
+                        d.is_delete,
+                        d.parent_id,
+                        d.update_time,
+                        a.*,
+                        (
+                            CASE
+                            WHEN d.document_type = 'dir' THEN
+                                0
+                            ELSE
+                                d.size
+                            END
+                        ) AS 'size',
+                        (
+                            CASE
+                            WHEN d.document_type = 'dir' THEN
+                                0
+                            ELSE
+                                1
+                            END
+                        ) AS 'is_dir',
+                        d.create_user,
+                        d.document_version_id,
+                        (
+                            CASE
+                            WHEN d.id = a.doc_id THEN
+                                1
+                            ELSE
+                                0
+                            END
+                        ) AS direct_share
+                    FROM
+                        document d
+                    INNER JOIN (
+                        SELECT
+                            ds.id AS share_id,
+                            ds.create_username,
+                            ds.create_time AS share_time,
+                            ds.document_id AS doc_id
+                        FROM
+                            document_share ds
+                        WHERE
+                            ds.inc_id = #{incId}
+                        AND (
+                                (
+                                ds.receiver_type = 0
+                                AND ds.receiver_id = #{userId}
+                                )
+                                <if test="groupIds != null">
+                                    OR (ds.receiver_type = 1 AND ds.receiver_id IN
+                                    <foreach item="item" index="index" collection="groupIds"
+                                             open="(" separator="," close=")">
+                                        #{item}
+                                    </foreach>)
+                                </if>
+                                <if test="departmentId != null">
+                                    OR (ds.receiver_type = 2 AND ds.receiver_id = #{departmentId})
+                                </if>
+                            )
+                    ) a ON d.id_path LIKE concat('%', a.doc_id, '%')
+                    AND d.is_delete = 0
+                    AND NOT EXISTS (
+                        SELECT
+                            *
+                        FROM
+                            document_share s
+                        WHERE
+                            s.inc_id = #{incId}
+                        AND s.receiver_type = 0
+                        AND s.receiver_id = #{userId}
+                        AND s.is_delete = 1
+                        AND s.document_id = d.id
+                    )
+                ) x WHERE
+            <choose>
+                <when test="parentId == null and documentName == null">
+                    x.direct_share = 1
+                </when>
+                <when test="parentId != null and documentName == null">
+                    x.parent_id = #{parentId}
+                </when>
+                <when test="parentId != null and documentName != null">
+                    x.id_path LIKE CONCAT('%/', #{parentId}, '/%')
+                </when>
+                <otherwise>
+                    <if test="parentId == null and documentName != null">
+                        1 = 1
+                    </if>
+                </otherwise>
+            </choose>
+            <if test="documentName != null and documentName != ''">
+                AND x.document_name LIKE CONCAT('%', #{documentName}, '%')
+            </if>
+            ORDER BY
+                is_dir ASC,
+                update_time DESC
+            <if test="startNum != null and pageSize != null">
+                LIMIT #{startNum}, #{pageSize}
+            </if>
+        ) y LEFT JOIN collect_document_rel cdr ON y.id = cdr.document_id AND cdr.user_id = #{userId}
+        ORDER BY document_type_order ASC, y.update_time DESC
+    </select>
+
+    <resultMap id="sharemap"   type="HashMap">
+        <result property="key" column="SP_FPARAMEKEY" />
+        <result property="value" column="SP_FPARAMEVALUE" />
+
+    </resultMap>
+
+    <select id="isShared" resultType="java.util.HashMap">
+     SELECT permission,p.id
+      FROM document_share ds JOIN document_permission p
+      ON ds.document_id = p.document_id
+      AND ds.document_id = #{docId}
+      AND  ds.receiver_type=p.receiver_type AND ds.receiver_id = p.receiver_id
+	  AND  ds.receiver_type =  #{recType}  AND ds.receiver_id = #{recId}
+      AND p.share_id IS NOT NULL
+    </select>
+
+    <delete id="deleteByDocumentIdList" parameterType="java.util.List">
+        delete from document_share
+        where document_id in
+        <foreach item="id" collection="list" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--<select id="getShareVOList" parameterType="java.util.Map" resultType="com.quarkdata.yunpan.api.model.vo.ShareAndLinkVO">
+        SELECT
+            d.*, d.id AS share_id, d.parent_id,
+            'share' AS share_type,
+        (
+        CASE
+        WHEN d.document_type = 'dir' THEN
+        0
+        ELSE
+        1
+        END
+        ) AS 'document_type_order',
+            MAX(ds.create_time) AS share_time,
+            (
+                SELECT
+                    count(
+                        CASE
+                        WHEN l.action_type = 34 THEN
+                            l.action_type
+                        ELSE
+                            NULL
+                        END
+                    )
+                FROM
+                    log_document_rel ld,
+                    log l
+                WHERE
+                    d.id = ld.document_id
+                AND ld.log_id = l.id
+            ) AS view_count,
+            (
+                SELECT
+                    count(
+                        CASE
+                        WHEN l.action_type = 7 THEN
+                            l.action_type
+                        ELSE
+                            NULL
+                        END
+                    )
+                FROM
+                    log_document_rel ld,
+                    log l
+                WHERE
+                    d.id = ld.document_id
+                AND ld.log_id = l.id
+            ) AS download_count
+        FROM
+            document_share ds
+        INNER JOIN document d ON d.id_path LIKE CONCAT('%/', ds.document_id, '/%')
+        WHERE
+            ds.inc_id = #{incId}
+        AND ds.create_user = #{userId}
+        AND d.is_delete = 0
+        AND d.type = 1
+        <choose>
+            <when test="parentId == null and documentName == null">
+                AND d.is_share = 1
+            </when>
+            <when test="parentId != null and documentName == null">
+                AND d.parent_id = #{parentId}
+            </when>
+            <otherwise>
+                <if test="parentId != null and documentName != null">
+                    AND d.id_path LIKE CONCAT('%/', #{parentId}, '/%')
+                </if>
+            </otherwise>
+        </choose>
+        <if test="documentName != null and documentName != ''">
+            AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+        </if>
+        GROUP BY
+            d.id
+        ORDER BY
+        document_type_order ASC,share_time DESC
+        <if test="startNum != null and pageSize != null">
+            LIMIT #{startNum}, #{pageSize}
+        </if>
+    </select>-->
+    <select id="getShareVOList" parameterType="java.util.Map" resultType="com.quarkdata.yunpan.api.model.vo.ShareAndLinkVO">
+        SELECT
+            d.*, d.id AS share_id, d.parent_id,
+            'share' AS share_type,
+        (
+        CASE
+        WHEN d.document_type = 'dir' THEN
+        0
+        ELSE
+        1
+        END
+        ) AS 'document_type_order',
+            MAX(ds.create_time) AS share_time,
+            (
+                SELECT
+                    count(
+                      CASE
+                      WHEN l.action_type = 34 THEN
+                          l.action_type
+                      ELSE
+                          NULL
+                      END
+                    )
+                FROM
+                  log_document_rel ld,
+                  log l,
+                  document d2
+                WHERE
+                  ld.log_id = l.id
+                AND l.create_user_id != #{userId}
+                AND d2.id_path LIKE CONCAT(d.id_path, '%')
+                AND ld.document_id = d2.id
+            ) AS view_count,
+            (
+                SELECT
+                    count(
+                        CASE
+                        WHEN l.action_type = 7 THEN
+                            l.action_type
+                        ELSE
+                            NULL
+                        END
+                    )
+                FROM
+                  log_document_rel ld,
+                  log l,
+                  document d2
+                WHERE
+                  ld.log_id = l.id
+                AND l.create_user_id != #{userId}
+                AND d2.id_path LIKE CONCAT(d.id_path, '%')
+                AND ld.document_id = d2.id
+            ) AS download_count
+        FROM
+            document_share ds
+        INNER JOIN document d ON d.id_path LIKE CONCAT('%/', ds.document_id, '/%')
+        WHERE
+            ds.inc_id = #{incId}
+        AND ds.create_user = #{userId}
+        AND d.is_delete = 0
+        AND d.type = 1
+        <choose>
+            <when test="parentId == null and documentName == null">
+                AND d.is_share = 1
+            </when>
+            <when test="parentId != null and documentName == null">
+                AND d.parent_id = #{parentId}
+            </when>
+            <otherwise>
+                <if test="parentId != null and documentName != null">
+                    AND d.id_path LIKE CONCAT('%/', #{parentId}, '/%')
+                </if>
+            </otherwise>
+        </choose>
+        <if test="documentName != null and documentName != ''">
+            AND d.document_name LIKE CONCAT('%', #{documentName}, '%')
+        </if>
+        GROUP BY
+            d.id
+        ORDER BY
+        document_type_order ASC,share_time DESC
+        <if test="startNum != null and pageSize != null">
+            LIMIT #{startNum}, #{pageSize}
+        </if>
+    </select>
+
+    <!--注:共享权限暂时按只读处理-->
+    <select id="getShareRecordsByDocumentId" parameterType="java.util.Map" resultType="com.quarkdata.yunpan.api.model.vo.DocumentPermissionVO">
+        SELECT
+            ds.document_id,
+            ds.receiver_type AS type,
+            ds.receiver_id AS id,
+            '0' AS permission
+        FROM
+            document_share ds
+        WHERE
+            ds.inc_id = #{incId}
+        AND ds.create_user = #{userId}
+        AND ds.document_id = #{docId}
+        AND ds.is_delete != 1
+    </select>
+
+    <select id="isSharedToMe" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            document d
+        INNER JOIN (
+            SELECT
+                ds.document_id
+            FROM
+                document_share ds
+            WHERE
+                ds.inc_id = #{incId}
+            AND ((
+                ds.receiver_type = 0
+                AND ds.receiver_id = #{userId}
+            )
+            <if test="groupIds != null and groupIds.size() > 0">
+                OR (
+                ds.receiver_type = 1
+                AND ds.receiver_id IN
+                <foreach collection="groupIds" item="group" index="index" open="(" separator="," close=")">
+                    #{group}
+                </foreach>
+                )
+            </if>
+            <if test="deptId != null">
+                OR (
+                ds.receiver_type = 2
+                AND receiver_id = #{deptId}
+                )
+            </if>
+        )) a ON d.id_path LIKE CONCAT('%/', a.document_id, '/%')
+        AND d.id = #{docId}
+        AND d.is_delete = 0
+    </select>
+
+    <select id="isSharedToMeWithoutMyExclude" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            document d
+        INNER JOIN (
+            SELECT
+                ds.document_id
+            FROM
+                document_share ds
+            WHERE
+                ds.inc_id = #{incId}
+            AND (
+                (
+                    ds.receiver_type = 0
+                    AND ds.receiver_id = #{userId}
+                )
+                <if test="groupIds != null and groupIds.size() > 0">
+                    OR (
+                    ds.receiver_type = 1
+                    AND ds.receiver_id IN
+                    <foreach collection="groupIds" item="group" index="index" open="(" separator="," close=")">
+                        #{group}
+                    </foreach>
+                    )
+                </if>
+                <if test="deptId != null">
+                    OR (
+                    ds.receiver_type = 2
+                    AND receiver_id = #{deptId}
+                    )
+                </if>
+            )
+        ) a ON d.id_path LIKE CONCAT('%/', a.document_id, '/%')
+        AND d.id = #{docId}
+        AND d.is_delete = 0
+        AND NOT EXISTS (
+            SELECT
+                *
+            FROM
+                document_share ds
+            WHERE
+                ds.inc_id = #{incId}
+            AND ds.receiver_type = 0
+            AND ds.receiver_id = #{userId}
+            AND ds.is_delete = 1
+            AND d.id_path LIKE concat('%', ds.document_id, '%')
+        )
+    </select>
+
+    <select id="isExcludeShare" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            document_share ds
+        WHERE
+            ds.inc_id = #{incId}
+        AND ds.document_id = #{docId}
+        AND (
+            ds.receiver_type = 0
+            AND ds.receiver_id = #{userId}
+            AND ds.is_delete = 1
+            )
+    </select>
+</mapper>

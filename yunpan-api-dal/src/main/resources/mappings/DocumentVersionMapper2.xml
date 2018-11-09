@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.DocumentVersionMapper2">
+    <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.DocumentVersion">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="inc_id" jdbcType="BIGINT" property="incId"/>
+        <result column="document_id" jdbcType="BIGINT" property="documentId"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="operate_type" jdbcType="CHAR" property="operateType"/>
+        <result column="is_delete" jdbcType="CHAR" property="isDelete"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="BIGINT" property="createUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="BIGINT" property="updateUser"/>
+        <result column="md5" jdbcType="VARCHAR" property="md5"/>
+        <result column="hash" jdbcType="VARCHAR" property="hash"/>
+        <result column="ceph_bucket" jdbcType="VARCHAR" property="cephBucket"/>
+        <result column="ceph_bucket_key" jdbcType="VARCHAR" property="cephBucketKey"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, inc_id, document_id, version, operate_type, is_delete, create_time, create_user, 
+    update_time, update_user, md5, hash, ceph_bucket, ceph_bucket_key
+  </sql>
+    <!--<select id="selectVersionByDocId" resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentVersion">-->
+     <!--select dv.ceph_bucket,dv.ceph_bucket_key-->
+    <!--from document d JOIN document_version dv-->
+    <!--ON d.document_version_id = dv.id-->
+    <!--where #{docId} = dv.document_id-->
+  <!--</select>-->
+
+    <select id="getFileNameByVersionId" resultType="java.lang.String">
+      select d.document_name from document d join document_version dv on d.id = dv.document_id where dv.id = #{versionId};
+    </select>
+    
+    <!-- 通过文件id删除该文件的所有版本 -->
+	<update id="delDocVersionByDocIdBatch">
+  		update document_version set is_delete='1',update_time=now(),update_user=#{updateUser} where document_id in 
+  		<foreach collection="docIdList" index="index" item="item" open="(" separator="," close=")">
+               #{item}       
+        </foreach>
+  	</update>
+  	
+  	<!-- 查找某文件的所有版本id -->
+  	<select id="getAllDocVersionIdByDocId" parameterType="java.lang.Long" resultType="java.lang.Long">
+  		select id from document_version where document_id = #{docId}
+  	</select>
+  	
+  	<!-- 查找文件列表中文件的所有版本id -->
+  	<select id="getAllDocVersionIdByDocIds" parameterType="java.lang.Long" resultType="java.lang.Long">
+  		select id from document_version where document_id in 
+  		<foreach collection="docIds" index="index" item="item" open="(" separator="," close=")">
+               #{item}       
+        </foreach>
+  	</select>
+  	
+  	<!-- 通过文件版本id，删除某一条文件版本记录 -->
+  	<update id="delDocVersionById">
+  		update document_version set is_delete='1',update_time=now(),update_user=#{updateUser} where id = #{id}
+  	</update>
+  	
+  	<!-- 通过id批量删除版本 -->
+  	<update id="delDocVersionByIds">
+		 update document_version set is_delete='1',update_time=now(),update_user=#{updateUser} where id in
+		 <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+               #{item}       
+        </foreach>
+  	</update>
+  	
+	<!--  批量还原某文件的所有被删版本 -->
+  	<update id="recoverDocVersionByDocId">
+  		update document_version set is_delete='0',update_time=now(),update_user=#{updateUser} where document_id in 
+  		<foreach collection="docIdList" index="index" item="item" open="(" separator="," close=")">
+               #{item}       
+        </foreach>
+  	</update>
+    
+     <!-- 通过文件id，获取该文件所有尚未删除的版本id -->
+  	<select id="getAllNotDelVersionIdByDocId" parameterType="java.lang.Long" resultType="java.lang.Long">
+  		select id from document_version where document_id = #{docId} and is_delete = "0"
+  	</select>
+  	
+  	<!-- 通过文件id列表，获取其中文件的所有尚未删除的版本id -->
+  	<select id="getAllNotDelVersionIdByDocIds" parameterType="java.lang.Long" resultType="java.lang.Long">
+  		select id from document_version where  is_delete = "0" and document_id in 
+  		<foreach collection="docIds" index="index" item="item" open="(" separator="," close=")">
+               #{item}       
+        </foreach>
+  	</select>
+    
+   <!-- 保留最近N个历史版本 -->
+   <select id="updateDocumentHistoryVersionByNum" resultType="java.lang.Long" >
+   	SELECT
+		dv.id
+	FROM
+		document d,
+		document_version dv
+	WHERE
+		d.id = dv.document_id
+	AND d.type = 0
+	AND 
+		(
+			SELECT
+				count(*)
+			FROM
+				document_version
+			WHERE
+				document_id = dv.document_id
+			AND inc_id = #{incId}
+			AND is_delete = 0
+			AND create_time > dv.create_time
+		) > (#{number} - 1)
+	ORDER BY
+		dv.document_id,
+		dv.create_time DESC;
+   </select>
+   
+   <!-- 保留最近N天历史版本 -->
+   <select id="updateDocumentHistoryVersionByDays" resultType="java.lang.Long" >
+	SELECT
+		dv.id
+	FROM
+		document d,
+		document_version dv
+	WHERE
+		d.id = dv.document_id
+	AND d.type = 0
+	AND dv.is_delete = 0
+	AND dv.inc_id = #{incId}
+	AND dv.create_time &lt; DATE_SUB(NOW(),INTERVAL #{days} DAY)
+   </select>
+   
+   <!-- 根据ID批量删除document_version记录 -->
+   <update id="deleteDocumentVersionByIds" >
+	UPDATE document_version
+	SET is_delete = 1,
+	 update_time = NOW(),
+	 update_user = #{userId},
+	 update_username = #{username}
+	WHERE
+		inc_id = #{incId}
+	AND id IN 
+		<foreach collection="ids" item="id" index="index" open="(" separator="," close=")">  
+	       #{id}  
+	    </foreach>
+   </update>
+	<!--查询最新版本-->
+	<select id="selectDocumentVersionById" parameterType="java.lang.Long" resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentVersion">
+
+		SELECT * from document_version WHERE
+		document_id=#{documentId}
+		AND version=
+		(SELECT MAX(version) from document_version WHERE document_id=#{documentId})
+	</select>
+</mapper>

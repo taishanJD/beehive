@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.MessageUserDocumentRelMapper2">
+    <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.MessageUserDocumentRel">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="inc_id" jdbcType="BIGINT" property="incId" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="message_id" jdbcType="BIGINT" property="messageId" />
+        <result column="document_id" jdbcType="BIGINT" property="documentId" />
+        <result column="is_read" jdbcType="CHAR" property="isRead" />
+    </resultMap>
+   <update id="updateIsRead" parameterType="map">
+       UPDATE message_user_document_rel
+       SET
+      is_read = 1
+      WHERE inc_id = #{incId} AND user_id = #{userId} AND message_id = #{msgId}
+   </update>
+</mapper>

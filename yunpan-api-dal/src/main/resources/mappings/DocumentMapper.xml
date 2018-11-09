@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.DocumentMapper">
+  <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.Document">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="inc_id" jdbcType="BIGINT" property="incId" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="document_version_id" jdbcType="BIGINT" property="documentVersionId" />
+    <result column="document_name" jdbcType="VARCHAR" property="documentName" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="document_type" jdbcType="VARCHAR" property="documentType" />
+    <result column="id_path" jdbcType="VARCHAR" property="idPath" />
+    <result column="size" jdbcType="BIGINT" property="size" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="create_username" jdbcType="VARCHAR" property="createUsername" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="update_username" jdbcType="VARCHAR" property="updateUsername" />
+    <result column="is_share" jdbcType="CHAR" property="isShare" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="is_delete" jdbcType="VARCHAR" property="isDelete" />
+    <result column="is_lock" jdbcType="CHAR" property="isLock" />
+    <result column="lock_time" jdbcType="TIMESTAMP" property="lockTime" />
+    <result column="lock_user" jdbcType="BIGINT" property="lockUser" />
+    <result column="lock_username" jdbcType="VARCHAR" property="lockUsername" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, inc_id, parent_id, document_version_id, document_name, type, document_type, id_path, 
+    size, create_time, create_user, create_username, update_time, update_user, update_username, 
+    is_share, description, is_delete, is_lock, lock_time, lock_user, lock_username
+  </sql>
+  <select id="selectByExample" parameterType="com.quarkdata.yunpan.api.model.dataobj.DocumentExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from document
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0">
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from document
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from document
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.quarkdata.yunpan.api.model.dataobj.DocumentExample">
+    delete from document
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.quarkdata.yunpan.api.model.dataobj.Document">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into document (inc_id, parent_id, document_version_id, 
+      document_name, type, document_type, 
+      id_path, size, create_time, 
+      create_user, create_username, update_time, 
+      update_user, update_username, is_share, 
+      description, is_delete, is_lock, 
+      lock_time, lock_user, lock_username
+      )
+    values (#{incId,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{documentVersionId,jdbcType=BIGINT}, 
+      #{documentName,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, #{documentType,jdbcType=VARCHAR}, 
+      #{idPath,jdbcType=VARCHAR}, #{size,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=BIGINT}, #{createUsername,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=BIGINT}, #{updateUsername,jdbcType=VARCHAR}, #{isShare,jdbcType=CHAR}, 
+      #{description,jdbcType=VARCHAR}, #{isDelete,jdbcType=VARCHAR}, #{isLock,jdbcType=CHAR}, 
+      #{lockTime,jdbcType=TIMESTAMP}, #{lockUser,jdbcType=BIGINT}, #{lockUsername,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.quarkdata.yunpan.api.model.dataobj.Document">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into document
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="incId != null">
+        inc_id,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="documentVersionId != null">
+        document_version_id,
+      </if>
+      <if test="documentName != null">
+        document_name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="documentType != null">
+        document_type,
+      </if>
+      <if test="idPath != null">
+        id_path,
+      </if>
+      <if test="size != null">
+        size,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createUsername != null">
+        create_username,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateUser != null">
+        update_user,
+      </if>
+      <if test="updateUsername != null">
+        update_username,
+      </if>
+      <if test="isShare != null">
+        is_share,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="isLock != null">
+        is_lock,
+      </if>
+      <if test="lockTime != null">
+        lock_time,
+      </if>
+      <if test="lockUser != null">
+        lock_user,
+      </if>
+      <if test="lockUsername != null">
+        lock_username,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="incId != null">
+        #{incId,jdbcType=BIGINT},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="documentVersionId != null">
+        #{documentVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="documentName != null">
+        #{documentName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="documentType != null">
+        #{documentType,jdbcType=VARCHAR},
+      </if>
+      <if test="idPath != null">
+        #{idPath,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="createUsername != null">
+        #{createUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUsername != null">
+        #{updateUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="isShare != null">
+        #{isShare,jdbcType=CHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="isLock != null">
+        #{isLock,jdbcType=CHAR},
+      </if>
+      <if test="lockTime != null">
+        #{lockTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lockUser != null">
+        #{lockUser,jdbcType=BIGINT},
+      </if>
+      <if test="lockUsername != null">
+        #{lockUsername,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.quarkdata.yunpan.api.model.dataobj.DocumentExample" resultType="java.lang.Long">
+    select count(*) from document
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update document
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.incId != null">
+        inc_id = #{record.incId,jdbcType=BIGINT},
+      </if>
+      <if test="record.parentId != null">
+        parent_id = #{record.parentId,jdbcType=BIGINT},
+      </if>
+      <if test="record.documentVersionId != null">
+        document_version_id = #{record.documentVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="record.documentName != null">
+        document_name = #{record.documentName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=CHAR},
+      </if>
+      <if test="record.documentType != null">
+        document_type = #{record.documentType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idPath != null">
+        id_path = #{record.idPath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.size != null">
+        size = #{record.size,jdbcType=BIGINT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null">
+        create_user = #{record.createUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.createUsername != null">
+        create_username = #{record.createUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null">
+        update_user = #{record.updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateUsername != null">
+        update_username = #{record.updateUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isShare != null">
+        is_share = #{record.isShare,jdbcType=CHAR},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isDelete != null">
+        is_delete = #{record.isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isLock != null">
+        is_lock = #{record.isLock,jdbcType=CHAR},
+      </if>
+      <if test="record.lockTime != null">
+        lock_time = #{record.lockTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lockUser != null">
+        lock_user = #{record.lockUser,jdbcType=BIGINT},
+      </if>
+      <if test="record.lockUsername != null">
+        lock_username = #{record.lockUsername,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update document
+    set id = #{record.id,jdbcType=BIGINT},
+      inc_id = #{record.incId,jdbcType=BIGINT},
+      parent_id = #{record.parentId,jdbcType=BIGINT},
+      document_version_id = #{record.documentVersionId,jdbcType=BIGINT},
+      document_name = #{record.documentName,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=CHAR},
+      document_type = #{record.documentType,jdbcType=VARCHAR},
+      id_path = #{record.idPath,jdbcType=VARCHAR},
+      size = #{record.size,jdbcType=BIGINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=BIGINT},
+      create_username = #{record.createUsername,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=BIGINT},
+      update_username = #{record.updateUsername,jdbcType=VARCHAR},
+      is_share = #{record.isShare,jdbcType=CHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      is_delete = #{record.isDelete,jdbcType=VARCHAR},
+      is_lock = #{record.isLock,jdbcType=CHAR},
+      lock_time = #{record.lockTime,jdbcType=TIMESTAMP},
+      lock_user = #{record.lockUser,jdbcType=BIGINT},
+      lock_username = #{record.lockUsername,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.quarkdata.yunpan.api.model.dataobj.Document">
+    update document
+    <set>
+      <if test="incId != null">
+        inc_id = #{incId,jdbcType=BIGINT},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="documentVersionId != null">
+        document_version_id = #{documentVersionId,jdbcType=BIGINT},
+      </if>
+      <if test="documentName != null">
+        document_name = #{documentName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="documentType != null">
+        document_type = #{documentType,jdbcType=VARCHAR},
+      </if>
+      <if test="idPath != null">
+        id_path = #{idPath,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null">
+        size = #{size,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="createUsername != null">
+        create_username = #{createUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null">
+        update_user = #{updateUser,jdbcType=BIGINT},
+      </if>
+      <if test="updateUsername != null">
+        update_username = #{updateUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="isShare != null">
+        is_share = #{isShare,jdbcType=CHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="isLock != null">
+        is_lock = #{isLock,jdbcType=CHAR},
+      </if>
+      <if test="lockTime != null">
+        lock_time = #{lockTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lockUser != null">
+        lock_user = #{lockUser,jdbcType=BIGINT},
+      </if>
+      <if test="lockUsername != null">
+        lock_username = #{lockUsername,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.quarkdata.yunpan.api.model.dataobj.Document">
+    update document
+    set inc_id = #{incId,jdbcType=BIGINT},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      document_version_id = #{documentVersionId,jdbcType=BIGINT},
+      document_name = #{documentName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=CHAR},
+      document_type = #{documentType,jdbcType=VARCHAR},
+      id_path = #{idPath,jdbcType=VARCHAR},
+      size = #{size,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=BIGINT},
+      create_username = #{createUsername,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=BIGINT},
+      update_username = #{updateUsername,jdbcType=VARCHAR},
+      is_share = #{isShare,jdbcType=CHAR},
+      description = #{description,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=VARCHAR},
+      is_lock = #{isLock,jdbcType=CHAR},
+      lock_time = #{lockTime,jdbcType=TIMESTAMP},
+      lock_user = #{lockUser,jdbcType=BIGINT},
+      lock_username = #{lockUsername,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectForUpdate" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from document
+    where id = #{id,jdbcType=BIGINT} for update
+  </select>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+    
+    <description>Spring bean</description>
+    
+	<bean id="userInfoRedis" class="com.quarkdata.yunpan.api.dal.api.UserInfoRedis" scope="request"></bean>
+	
+	<bean id="deleteService" class="com.quarkdata.yunpan.api.service.impl.DeleteServiceImpl"></bean>
+
+	<bean id="archivalFileService" class="com.quarkdata.yunpan.api.service.impl.ArchivalFileServiceImpl"></bean>
+
+	<bean id="fullTextService" class="com.quarkdata.yunpan.api.service.impl.FullTextServiceImpl"></bean>
+
+	<bean id="documentTypeList" class="com.quarkdata.yunpan.api.task.DocumentTypeList"></bean>
+
+	<bean id="mailHandler" class="com.quarkdata.yunpan.api.async.handler.MailHandler"></bean>
+
+	<bean id="eventProducer" class="com.quarkdata.yunpan.api.async.EventProducer"></bean>
+
+	<bean id="eventConsumer" class="com.quarkdata.yunpan.api.async.EventConsumer"></bean>
+
+	<bean id="downloadUtil" class="com.quarkdata.yunpan.api.util.DownloadUtil"> </bean>
+
+
+
+
+	<!-- 使用Spring封装的Mail Sender -->
+	<bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.host}"/>
+		<property name="port" value="${mail.port}"/>
+		<property name="username" value="${mail.username}"/>
+		<property name="password" value="${mail.password}"/>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.debug">false</prop>
+				<prop key="mail.smtp.timeout">25000</prop>
+				<prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+			</props>
+		</property>
+	</bean>
+</beans>

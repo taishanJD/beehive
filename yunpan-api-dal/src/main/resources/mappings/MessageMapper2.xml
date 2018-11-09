@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.MessageMapper2">
+    <resultMap id="BaseResultMap" type="com.quarkdata.yunpan.api.model.dataobj.Message">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="inc_id" jdbcType="BIGINT" property="incId" />
+        <result column="message" jdbcType="VARCHAR" property="message" />
+        <result column="create_username" jdbcType="VARCHAR" property="createUsername" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="message_type" jdbcType="INTEGER" property="messageType" />
+    </resultMap>
+    <resultMap id="BaseResultMapMessageExtend"
+               type="com.quarkdata.yunpan.api.model.vo.MessageExtend">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="inc_id" jdbcType="BIGINT" property="incId" />
+        <result column="create_username" jdbcType="VARCHAR" property="createUsername" />
+        <result column="message" jdbcType="VARCHAR" property="message" />
+        <result column="document_id" jdbcType="BIGINT" property="documentId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="document_name" jdbcType="VARCHAR" property="documentName" />
+        
+        <result column="message_type" jdbcType="INTEGER" property="messageType" />
+        <result column="is_read" jdbcType="VARCHAR" property="isRead" />
+    </resultMap>
+    <select id="getMessage" parameterType="map" resultMap="BaseResultMapMessageExtend">
+          SELECT m.id,m.inc_id,m.message,m.create_username,m.create_time,mudr.document_id,d.document_name
+                FROM message m,message_user_document_rel mudr,document d
+            WHERE m.id=mudr.message_id
+            AND mudr.is_delete = '0'
+            AND mudr.document_id=d.id
+            AND mudr.user_id=#{userId}
+            AND mudr.is_read='0'
+            AND mudr.inc_id=#{incId}
+            ORDER BY m.create_time DESC
+    </select>
+    
+    <select id="getAllMessage" parameterType="map" resultMap="BaseResultMapMessageExtend">
+          SELECT m.id,m.inc_id,m.message,m.create_username,m.create_time,mudr.document_id,d.document_name,
+          		mudr.is_read,m.message_type
+                FROM message m,message_user_document_rel mudr,document d
+            WHERE m.id=mudr.message_id
+            AND mudr.is_delete = '0'
+            AND mudr.document_id=d.id
+            AND mudr.user_id=#{userId}
+            AND mudr.inc_id=#{incId}
+            ORDER BY mudr.is_read ASC,m.create_time DESC
+    </select>
+</mapper>

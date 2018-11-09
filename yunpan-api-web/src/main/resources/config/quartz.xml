@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/beans"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xmlns:context="http://www.springframework.org/schema/context"
+			 xsi:schemaLocation="http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 加载配置属性文件 -->
+	<context:property-placeholder ignore-unresolvable="true" location="classpath:config/config.properties" />
+
+	<!-- 1.配置任务bean类 -->
+	<bean id="deleteJob" class="com.quarkdata.yunpan.api.task.DeleteJob" />
+	<bean id="addToCephDeleteJob" class="com.quarkdata.yunpan.api.task.AddToCephDeleteJob" />
+	<bean id="documentTypeJob" class="com.quarkdata.yunpan.api.task.DocumentTypeJob" />
+	<bean id="deleteExpiredExternalUserJob" class="com.quarkdata.yunpan.api.task.DeleteExpiredExternalUserJob" />
+	<bean id="unlockDocumentJob" class="com.quarkdata.yunpan.api.task.UnlockDocumentJob"/>
+
+
+
+	<!--1.1-->
+	<!-- documentTypeJob方法映射工厂类 -->
+	<bean id="documentTypeJobDetail"
+		  class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+				  value="com.quarkdata.yunpan.api.task.DocumentTypeJob" />
+		<property name="durability" value="true" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="archivalFileService" value-ref="archivalFileService" />
+				<entry key="documentTypeList" value-ref="documentTypeList"></entry>
+				<entry key="timeout" value="5" />
+			</map>
+		</property>
+	</bean>
+	<!-- documentTypeJob任务调度的的时间/周期 -->
+	<bean id="documentTypeTrigger"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="documentTypeJobDetail" />
+		<property name="cronExpression" value="0 0 4 * * ? " /> <!-- 每天凌晨4点查询所有文件类型 -->
+	</bean>
+
+
+	<!--1.2-->
+	<!-- deleteJob方法映射工厂类 -->
+	<bean id="deleteJobDetail"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="com.quarkdata.yunpan.api.task.DeleteJob" />
+		<property name="durability" value="true" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="deleteService" value-ref="deleteService" />
+				<entry key="timeout" value="5" />
+			</map>
+		</property>
+	</bean>
+	<!-- deleteJob任务调度的的时间/周期 -->
+	<bean id="deleteCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="deleteJobDetail" />
+		<property name="cronExpression" value="0 0/5 2-3 * * ?" /> <!-- 每天凌晨2-3点，每5分钟执行一次 -->
+	</bean>
+	
+
+	<!--1.3-->
+	<!-- addToCephDeleteJob方法映射工厂类 -->
+	<bean id="addToCephDeleteJobDetail"
+		class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+			value="com.quarkdata.yunpan.api.task.AddToCephDeleteJob" />
+		<property name="durability" value="true" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="deleteService" value-ref="deleteService" />
+				<entry key="timeout" value="5" />
+			</map>
+		</property>
+	</bean>
+	<!-- addToCephDeleteJobCronTrigger任务调度的的时间/周期 -->
+	<bean id="addToCephDeleteJobCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="addToCephDeleteJobDetail" />
+		<property name="cronExpression" value="0 0 1 * * ?" /> <!-- 每天凌晨1点执行一次 -->
+	</bean>
+
+
+	<!--1.4-->
+	<!-- deleteExpiredExternalUserJob方法映射工厂类 -->
+	<bean id="deleteExpiredExternalUserJobDetail"
+		  class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+				  value="com.quarkdata.yunpan.api.task.DeleteExpiredExternalUserJob" />
+		<property name="durability" value="true" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="externalUserService" value-ref="externalUserServiceImpl" />
+				<entry key="timeout" value="5" />
+			</map>
+		</property>
+	</bean>
+	<!-- deleteExpiredExternalUserJobCronTrigger任务调度的的时间/周期 -->
+	<bean id="deleteExpiredExternalUserJobCronTrigger"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="deleteExpiredExternalUserJobDetail" />
+		<property name="cronExpression" value="0 0 4 * * ?" /> <!-- 每天凌晨4点执行一次 -->
+	</bean>
+
+
+	<!--1.5-->
+	<!-- generateIndexJob方法映射工厂类 -->
+	<bean id="regenerateESIndexJobDetail"
+		  class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass"
+				  value="com.quarkdata.yunpan.api.task.RegenerateESIndexJob" />
+		<property name="durability" value="true" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="fullTextService" value-ref="fullTextService" />
+				<entry key="timeout" value="5" />
+			</map>
+		</property>
+	</bean>
+	<!-- generateIndexJobCronTrigger任务调度的的时间/周期 -->
+	<bean id="regenerateESIndexJobCronTrigger"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="regenerateESIndexJobDetail" />
+		<property name="cronExpression" value="0 0 2 * * ?" /> <!-- 每天凌晨2点执行一次 -->
+	</bean>
+
+
+	<!--1.6-->
+	<!-- unlockDocumentJob方法映射工厂类 -->
+	<bean id="unlockDocumentJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		<property name="jobClass" value="com.quarkdata.yunpan.api.task.UnlockDocumentJob"/>
+		<property name="durability" value="true" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="documentService" value-ref="documentServiceImpl"/>
+				<entry key="unlockDay" value="${document.unlock.day}"/>
+				<entry key="timeout" value="5" />
+			</map>
+		</property>
+	</bean>
+	<!-- unlockDocumentJobJobCronTrigger任务调度的的时间/周期 -->
+	<bean id="unlockDocumentJobCronTrigger"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="unlockDocumentJobDetail" />
+		<property name="cronExpression" value="0 0 4 * * ?" /> <!-- 每天凌晨4点执行一次 -->
+	</bean>
+
+
+	<!--2-->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="deleteJobDetail" />
+				<ref bean="addToCephDeleteJobDetail"/>
+				<ref bean="documentTypeJobDetail"/>
+				<ref bean="deleteExpiredExternalUserJobDetail"/>
+				<ref bean="regenerateESIndexJobDetail"/>
+				<ref bean="unlockDocumentJobDetail"/>
+			</list>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="deleteCronTrigger" />
+				<ref bean="addToCephDeleteJobCronTrigger" />
+				<ref bean="documentTypeTrigger" />
+				<ref bean="deleteExpiredExternalUserJobCronTrigger" />
+				<ref bean="regenerateESIndexJobCronTrigger" />
+				<ref bean="unlockDocumentJobCronTrigger" />
+			</list>
+		</property>
+	</bean>
+
+</beans:beans>

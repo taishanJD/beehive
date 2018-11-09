@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.quarkdata.yunpan.api.dal.dao.DocumentCephDeleteMapper2">
+	<resultMap id="BaseResultMap"
+		type="com.quarkdata.yunpan.api.model.dataobj.DocumentCephDelete">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="inc_id" jdbcType="BIGINT" property="incId" />
+		<result column="document_version_id" jdbcType="BIGINT"
+			property="documentVersionId" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_user" jdbcType="BIGINT" property="createUser" />
+		<result column="delete_time" jdbcType="TIMESTAMP" property="deleteTime" />
+		<result column="is_delete" jdbcType="CHAR" property="isDelete" />
+	</resultMap>
+	<!-- 并将其is_delete改为"1"， 表示该条记录将要进入删除任务 -->
+	<update id="markDocVersion">
+		update document_ceph_delete set is_delete = '1',
+		delete_time = now()
+		where id in
+		<foreach collection="ids" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+
+	<!--  根据id获取incId -->
+	<select id="getDeletingIncId" resultType="java.lang.Long">
+		select inc_id from document_ceph_delete where id in
+		<foreach collection="ids" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getDeletingDocVersion"
+		resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentVersion">
+		select * from document_version where id in
+		(select document_version_id from document_ceph_delete where id in
+		<foreach collection="ids" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		)
+	</select>
+	
+	 <!-- 根据id和incId获取doc_version -->
+	<select id="getDeletingDocVersionByIncId"
+		resultType="com.quarkdata.yunpan.api.model.dataobj.DocumentVersion">
+		select * from document_version where id in
+		(select document_version_id from document_ceph_delete where inc_id = #{incId}
+		and id in
+		<foreach collection="ids" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		)
+	</select>
+
+	<!-- and inc_id = #{incId} and create_user = #{userId} -->
+	<select id="getUnMarkedId" resultType="java.lang.Long">
+		select id from
+		document_ceph_delete where is_delete = '0' order by create_time asc
+		limit #{count}
+	</select>
+
+	<select id="getExistDocVersionIdsByDocIds" resultType="java.lang.Long">
+		select document_version_id from document_ceph_delete where
+		document_version_id in
+		(select id from document_version where document_id in
+		<foreach collection="docIds" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+		)
+	</select>
+
+	<select id="getExistDocVersionIdsByDocVersionIds" resultType="java.lang.Long">
+		select document_version_id from document_ceph_delete where
+		document_version_id in
+		<foreach collection="docVersionIds" index="index" item="item"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+</mapper>

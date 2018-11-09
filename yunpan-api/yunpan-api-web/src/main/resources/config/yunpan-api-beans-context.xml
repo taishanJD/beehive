@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/beans"
+			 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			 xmlns:beans="http://www.springframework.org/schema/beans"
+			 xsi:schemaLocation="http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+
+
+
+	<!-- 设置调度 -->
+	<!-- <bean id="payScheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="paymentNotifyRetryTrigger" />
+            </list>
+        </property>
+    </bean> 
+    
+    	业务对象
+	 <bean id="paymentNotifyRetryTask" class="com.root.pay.service.quartz.PaymentNotifyRetryTask">
+    </bean>
+    
+	调度业务 
+	 <bean id="paymentNotifyRetryJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="paymentNotifyRetryTask" />
+        <property name="targetMethod" value="doWork" />
+        <property name="concurrent" value="false" />
+    </bean>
+
+	
+	 每3分钟补偿一次
+	  <value>0 */3 * * * ?</value> <value>0 0 2 * * ?</value>
+	<bean id="paymentNotifyRetryTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="paymentNotifyRetryJob" />
+		<property name="cronExpression">			
+			<value>0 */3 * * * ?</value>
+		</property>
+	</bean>  -->
+
+</beans:beans>
